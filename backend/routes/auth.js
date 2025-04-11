@@ -3,27 +3,15 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Usuario = require("../models/Usuario");  // Importa el modelo
 require("dotenv").config();
+const authController = require('../controllers/authController');
 
 const router = express.Router();
 
 // Registro de usuario
-router.post("/register", async (req, res) => {
-  try {
-    const { nombre, email, password } = req.body;
-    if (!nombre || !email || !password) {
-      return res.status(400).json({ error: "Todos los campos son obligatorios" });
-    }
+router.post('/register', authController.register);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const nuevoUsuario = await Usuario.create({ nombre, email, password: hashedPassword });
 
-    res.json({ message: "Usuario registrado correctamente", usuario: nuevoUsuario });
-  } catch (error) {
-    res.status(500).json({ error: "Error en el registro", detalle: error.message });
-  }
-});
-
-// Login de usuario
+// Login de usuario 
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;

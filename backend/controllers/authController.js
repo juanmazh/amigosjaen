@@ -1,56 +1,50 @@
 const Usuario = require('../models/Usuario');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
-// Registro de usuario
+const JWT_SECRET = 'secretoSuperSeguro'; // Idealmente usa una variable de entorno
+
 exports.register = async (req, res) => {
-  try {
-    const { nombre, email, contraseña } = req.body;
+  const { nombre, email, contraseña } = req.body;
 
-    // Verificar si el usuario ya existe
+  // Validación básica de los campos
+  if (!nombre || !email || !contraseña) {
+    return res.status(400).json({ msg: 'Todos los campos son obligatorios' });
+  }
+
+  try {
+    // Verificar si ya existe el usuario
     const existeUsuario = await Usuario.findOne({ where: { email } });
-    if (existeUsuario) return res.status(400).json({ msg: 'El email ya está registrado' });
+    if (existeUsuario) {
+      return res.status(400).json({ msg: 'El usuario ya existe' });
+    }
 
-    // Hashear contraseña
+    // Hashear la contraseña
     const salt = await bcrypt.genSalt(10);
-    const contraseñaHash = await bcrypt.hash(contraseña, salt);
+    const contraseñaHasheada = await bcrypt.hash(contraseña, salt);
 
-    // Crear usuario
-    const nuevoUsuario = await Usuario.create({ nombre, email, contraseña: contraseñaHash });
+    // Crear el nuevo usuario
+    const nuevoUsuario = await Usuario.create({
+      nombre,
+      email,
+      contraseña: contraseñaHasheada,
+    });
 
-    res.json({ msg: 'Usuario registrado correctamente' });
+    // Crear el token JWT
+    const payload = { id: nuevoUsuario.id };
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+
+    // Enviar la respuesta con el token y el usuario
+    res.json({
+      token,
+      usuario: {
+        id: nuevoUsuario.id,
+        nombre: nuevoUsuario.nombre,
+        email: nuevoUsuario.email,
+      },
+    });
   } catch (error) {
-    res.status(500).json({ msg: 'Error en el servidor' });
-  }
-};
-
-// Login de usuario
-exports.login = async (req, res) => {
-  try {
-    const { email, contraseña } = req.body;
-
-    const usuario = await Usuario.findOne({ where: { email } });
-    if (!usuario) return res.status(400).json({ msg: 'Usuario no encontrado' });
-
-    const esCorrecta = await bcrypt.compare(contraseña, usuario.contraseña);
-    if (!esCorrecta) return res.status(400).json({ msg: 'Contraseña incorrecta' });
-
-    // Generar token JWT
-    const token = jwt.sign({ id: usuario.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-    res.json({ token, usuario });
-  } catch (error) {
-    res.status(500).json({ msg: 'Error en el servidor' });
-  }
-};
-
-// Obtener usuario autenticado
-exports.getUsuario = async (req, res) => {
-  try {
-    const usuario = await Usuario.findByPk(req.usuario.id, { attributes: { exclude: ['contraseña'] } });
-    res.json(usuario);
-  } catch (error) {
-    res.status(500).json({ msg: 'Error en el servidor' });
+    console.error(error);
+    res.status(500).json({ msg: 'Error al registrar usuario', error });
   }
 };
