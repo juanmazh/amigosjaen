@@ -1,36 +1,33 @@
 // src/pages/Admin.jsx
-import { useContext, useEffect, useState } from 'react';
-import AuthContext from '../context/AuthContext';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
 import api from '../api';
 
 function Admin() {
-  const { usuario, cargando } = useContext(AuthContext);
+  const { usuario } = useContext(AuthContext);
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
 
-  useEffect(() => {
-    if (!cargando) {
-      if (!usuario) {
-        navigate('/login');
-      } else if (usuario.rol !== 'admin') {
-        navigate('/'); // O muestra un mensaje de acceso denegado
-      } else {
-        api.get('/usuarios')
-          .then(res => setUsuarios(res.data))
-          .catch(err => console.error('Error al obtener usuarios', err));
-      }
+  useEffect(() => { 
+    if (!usuario) {
+      navigate('/login');
+    } else {
+      api.get('/usuarios')
+        .then(res => setUsuarios(res.data))
+        .catch(err => console.error('Error al obtener usuarios', err));
     }
-  }, [usuario, cargando]);
-
-  if (cargando) return <p>Cargando...</p>;
+  }, [usuario]);
 
   return (
-    <div>
-      <h2>Gestión de Usuarios</h2>
-      <ul>
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-4">Gestión de Usuarios</h2>
+      <ul className="space-y-2">
         {usuarios.map(u => (
-          <li key={u.id}>{u.nombre} - {u.email}</li>
+          <li key={u.id} className="bg-white rounded shadow p-4">
+            <p className="text-lg font-medium">{u.nombre}</p>
+            <p className="text-sm text-gray-600">{u.email}</p>
+          </li>
         ))}
       </ul>
     </div>
