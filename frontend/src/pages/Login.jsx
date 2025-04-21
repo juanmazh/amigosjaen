@@ -13,7 +13,7 @@ function Login() {
     e.preventDefault();
     try {
       await login(email, contraseña);
-      navigate('/admin');
+      navigate('/');
     } catch (err) {
       setError('Credenciales incorrectas');
     }
