@@ -1,58 +1,62 @@
 import { createContext, useState, useEffect } from 'react';
-import api from '../api';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true);  // Para manejar el estado de carga
+  const [cargando, setCargando] = useState(true);
 
-  // useEffect para verificar si el token es válido cuando la aplicación carga
+  // Al iniciar la app, intenta obtener el usuario autenticado si hay token
   useEffect(() => {
-    if (token) {
-      api.get('/auth/usuario', { headers: { 'x-auth-token': token } })
-        .then(res => {
-          setUsuario(res.data);
-          setLoading(false);  // Detener el estado de carga después de verificar
-        })
-        .catch(() => {
-          setToken(null);
-          localStorage.removeItem('token');
-          setLoading(false);  // Detener el estado de carga en caso de error
+    const obtenerUsuario = async () => {
+      if (!token) {
+        setCargando(false);
+        return;
+      }
+
+      try {
+        console.log("Token que se enviará:", token);
+        const res = await axios.get('http://localhost:5000/api/auth/usuario', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
-    } else {
-      setLoading(false);  // Si no hay token, terminar de cargar inmediatamente
-    }
+     
+        setUsuario(res.data); // Aquí llegan los datos del usuario
+      } catch (error) {
+        console.error('Error al obtener el usuario:', error);
+        setUsuario(null); // Token inválido o expirado
+        setToken(null);
+        localStorage.removeItem('token');
+      } finally {
+        setCargando(false);
+      }
+    };
+
+    obtenerUsuario();
   }, [token]);
 
-  // Función para hacer login
   const login = async (email, contraseña) => {
-    try {
-      const res = await api.post('/auth/login', { email, contraseña });
-      setToken(res.data.token);
-      localStorage.setItem('token', res.data.token);
-      setUsuario(res.data.usuario);
-    } catch (error) {
-      console.error("Error al iniciar sesión:", error);
-      throw new Error("Error al iniciar sesión");
-    }
+    const res = await axios.post('http://localhost:5000/api/auth/login', {
+      email,
+      contraseña,
+    });
+
+    localStorage.setItem('token', res.data.token);
+    setToken(res.data.token);
+    setUsuario(res.data.usuario);
   };
 
-  // Función para hacer logout
   const logout = () => {
-    setToken(null);
     localStorage.removeItem('token');
+    setToken(null);
     setUsuario(null);
   };
 
-  if (loading) {
-    return <div>Cargando...</div>;  // Agregar una pantalla de carga si se está verificando el token
-  }
-
   return (
-    
-    <AuthContext.Provider value={{ usuario, login, logout }}>
+    <AuthContext.Provider value={{ usuario, login, logout, cargando }}>
       {children}
     </AuthContext.Provider>
   );

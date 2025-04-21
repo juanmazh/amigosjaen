@@ -1,7 +1,7 @@
 // backend/models/Usuario.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-
+//Datos que son relevantes al usuario
 const Usuario = sequelize.define('Usuario', {
   nombre: {
     type: DataTypes.STRING,
@@ -15,6 +15,10 @@ const Usuario = sequelize.define('Usuario', {
   contraseña: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  rol: {
+    type: DataTypes.STRING,
+    defaultValue: 'usuario'  // Rol por defecto es 'usuario'
   }
 });
 

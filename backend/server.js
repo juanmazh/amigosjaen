@@ -1,15 +1,19 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const sequelize = require('./config/database');
 const Usuario = require('./models/Usuario');
 const Publicacion = require('./models/Publicacion');
-
+const usuariosRoutes = require('./routes/usuarios');
 const app = express();
 app.use(express.json());
 app.use(cors());
 
 // Ruta de prueba
 app.get('/', (req, res) => res.send('API funcionando'));
+
+//Vista de admin
+app.use('/api/usuarios', usuariosRoutes);
 
 // Sincronizar base de datos
 sequelize.sync({ force: false }).then(() => console.log('Base de datos sincronizada'));
