@@ -14,6 +14,9 @@ app.get('/', (req, res) => res.send('API funcionando'));
 
 //Vista de admin
 app.use('/api/usuarios', usuariosRoutes);
+// Rutas de publicaciones
+const publicacionesRoutes = require('./routes/publicaciones');
+app.use('/api/publicaciones', publicacionesRoutes);
 
 // Sincronizar base de datos
 sequelize.sync({ force: false }).then(() => console.log('Base de datos sincronizada'));
