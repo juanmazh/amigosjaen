@@ -55,7 +55,7 @@ function Home() {
 
         {/* Footer */}
     <footer className="bg-white shadow p-4 text-center text-sm text-gray-500">
-      © 2025 Mi Foro. Todos los derechos reservados.
+      © 2025 AmigosJaén. Todos los derechos reservados.
     </footer>
   </div>
   );

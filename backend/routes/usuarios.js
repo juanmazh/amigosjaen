@@ -1,17 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const auth = require('../middleware/auth');
 const Usuario = require('../models/Usuario');
+const verificarToken = require('../middleware/verificarToken');
+const soloAdmin = require('../middleware/soloAdmin');
 
-// Obtener todos los usuarios (solo para admin)
-router.get('/', auth, async (req, res) => {
+// ✅ Obtener todos los usuarios (solo admin)
+router.get('/', verificarToken, soloAdmin, async (req, res) => {
   try {
-    const usuario = await Usuario.findByPk(req.usuarioId);
-
-    if (usuario.rol !== 'admin') {
-      return res.status(403).json({ msg: 'Acceso denegado' });
-    }
-
     const usuarios = await Usuario.findAll({
       attributes: ['id', 'nombre', 'email', 'rol']
     });
@@ -23,7 +18,8 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-router.delete('/:id', auth, async (req, res) => {
+// ✅ Eliminar un usuario (solo admin)
+router.delete('/:id', verificarToken, soloAdmin, async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.params.id);
     if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
@@ -35,7 +31,8 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-router.put('/:id', auth, async (req, res) => {
+// ✅ Actualizar un usuario (solo admin)
+router.put('/:id', verificarToken, soloAdmin, async (req, res) => {
   const { nombre, email, rol } = req.body;
   try {
     const usuario = await Usuario.findByPk(req.params.id);
@@ -51,6 +48,5 @@ router.put('/:id', auth, async (req, res) => {
     res.status(500).json({ msg: 'Error al actualizar el usuario' });
   }
 });
-
 
 module.exports = router;

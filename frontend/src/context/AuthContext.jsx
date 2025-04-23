@@ -1,14 +1,16 @@
-import { createContext, useState, useEffect } from 'react';
+// ✅ AuthContext.jsx
+import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 
 const AuthContext = createContext();
+
+export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [usuario, setUsuario] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [cargando, setCargando] = useState(true);
 
-  // Al iniciar la app, intenta obtener el usuario autenticado si hay token
   useEffect(() => {
     const obtenerUsuario = async () => {
       if (!token) {
@@ -23,11 +25,11 @@ export const AuthProvider = ({ children }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-     
-        setUsuario(res.data); // Aquí llegan los datos del usuario
+
+        setUsuario(res.data);
       } catch (error) {
         console.error('Error al obtener el usuario:', error);
-        setUsuario(null); // Token inválido o expirado
+        setUsuario(null);
         setToken(null);
         localStorage.removeItem('token');
       } finally {
