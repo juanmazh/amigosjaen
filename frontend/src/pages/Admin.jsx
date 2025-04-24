@@ -1,34 +1,38 @@
-// Admin.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import AuthContext from "../context/AuthContext";
 import api from "../api";
+
+const MySwal = withReactContent(Swal);
 
 function Admin() {
   const { usuario, cargando } = useContext(AuthContext);
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
-  const [usuarioEditando, setUsuarioEditando] = useState(null);
 
   useEffect(() => {
     if (cargando) return;
     if (!usuario || usuario.rol !== "admin") {
       navigate("/login");
     } else {
-      api
-        .get("/usuarios", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
-        .then((res) => setUsuarios(res.data))
-        .catch((err) => {
-          console.error("Error al obtener usuarios", err);
-          Swal.fire("Error", "No se pudieron cargar los usuarios", "error");
-        });
+      cargarUsuarios();
     }
   }, [usuario, cargando, navigate]);
+
+  const cargarUsuarios = () => {
+    api
+      .get("/usuarios", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => setUsuarios(res.data))
+      .catch(() =>
+        Swal.fire("Error", "No se pudieron cargar los usuarios", "error")
+      );
+  };
 
   const eliminarUsuario = async (id) => {
     const confirmacion = await Swal.fire({
@@ -36,8 +40,6 @@ function Admin() {
       text: "Esta acción no se puede deshacer.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
       confirmButtonText: "Sí, eliminar",
       cancelButtonText: "Cancelar",
     });
@@ -45,47 +47,131 @@ function Admin() {
     if (confirmacion.isConfirmed) {
       try {
         await api.delete(`/usuarios/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
-        setUsuarios(usuarios.filter((u) => u.id !== id));
-        Swal.fire("Eliminado", "El usuario ha sido eliminado.", "success");
+        setUsuarios((prev) => prev.filter((u) => u.id !== id));
+        Swal.fire("Eliminado", "Usuario eliminado correctamente", "success");
       } catch (error) {
-        console.error("Error al eliminar usuario", error);
         Swal.fire("Error", "No se pudo eliminar el usuario", "error");
       }
     }
   };
 
-  const handleActualizarUsuario = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await api.put(
-        `/usuarios/${usuarioEditando.id}`,
-        usuarioEditando,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+  const abrirFormularioUsuario = (usuarioInicial = null) => {
+    MySwal.fire({
+      title: usuarioInicial ? "Editar Usuario" : "Nuevo Usuario",
+      html: (
+        <div className="flex flex-col space-y-3">
+          <input
+            id="swal-nombre"
+            className="swal2-input"
+            defaultValue={usuarioInicial?.nombre || ""}
+            placeholder="Nombre"
+          />
+          <input
+            id="swal-email"
+            className="swal2-input"
+            type="email"
+            defaultValue={usuarioInicial?.email || ""}
+            placeholder="Email"
+          />
+          <select id="swal-rol" className="swal2-select" defaultValue={usuarioInicial?.rol || "cliente"}>
+            <option value="cliente">Cliente</option>
+            <option value="admin">Administrador</option>
+          </select>
+        </div>
+      ),
+      showCancelButton: true,
+      confirmButtonText: usuarioInicial ? "Actualizar" : "Crear",
+      preConfirm: () => {
+        const nombre = document.getElementById("swal-nombre").value;
+        const email = document.getElementById("swal-email").value;
+        const rol = document.getElementById("swal-rol").value;
+
+        if (!nombre || !email || !rol) {
+          Swal.showValidationMessage("Todos los campos son obligatorios");
         }
-      );
-      setUsuarios((prev) =>
-        prev.map((u) =>
-          u.id === usuarioEditando.id ? res.data.usuario : u
-        )
-      );
-      setUsuarioEditando(null);
-      Swal.fire("Actualizado", "Usuario actualizado correctamente", "success");
-    } catch (error) {
-      console.error("Error al actualizar usuario", error);
-      Swal.fire("Error", "No se pudo actualizar el usuario", "error");
+
+        return { nombre, email, rol };
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed && result.value) {
+        const datos = result.value;
+        try {
+          if (usuarioInicial) {
+            const res = await api.put(`/usuarios/${usuarioInicial.id}`, datos, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            setUsuarios((prev) =>
+              prev.map((u) => (u.id === usuarioInicial.id ? res.data.usuario : u))
+            );
+            Swal.fire("Actualizado", "Usuario actualizado correctamente", "success");
+          } else {
+            const res = await api.post(`/usuarios`, datos, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            setUsuarios((prev) => [...prev, res.data.usuario]);
+            Swal.fire("Creado", "Usuario creado correctamente", "success");
+          }
+        } catch (error) {
+          Swal.fire("Error", "No se pudo guardar el usuario", "error");
+        }
+      }
+    });
+  };
+
+  const mostrarFormularioNuevoUsuario = async () => {
+    const { value: formValues } = await MySwal.fire({
+      title: 'Crear nuevo usuario',
+      html:
+        `<input id="swal-input-nombre" class="swal2-input" placeholder="Nombre">` +
+        `<input id="swal-input-email" class="swal2-input" placeholder="Email">` +
+        `<input id="swal-input-password" type="password" class="swal2-input" placeholder="Contraseña">` +
+        `<select id="swal-input-rol" class="swal2-select">
+          <option value="cliente">Cliente</option>
+          <option value="admin">Administrador</option>
+        </select>`,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'Crear',
+      preConfirm: () => {
+        const nombre = document.getElementById('swal-input-nombre').value;
+        const email = document.getElementById('swal-input-email').value;
+        const password = document.getElementById('swal-input-password').value;
+        const rol = document.getElementById('swal-input-rol').value;
+  
+        if (!nombre || !email || !password) {
+          Swal.showValidationMessage('Todos los campos son obligatorios');
+          return;
+        }
+        return { nombre, email, password, rol };
+      }
+    });
+  
+    if (formValues) {
+      try {
+        const res = await api.post('/auth/register', formValues);
+        setUsuarios([...usuarios, res.data.usuario]);
+        Swal.fire('Usuario creado', '', 'success');
+      } catch (error) {
+        console.error('Error al crear usuario', error);
+        Swal.fire('Error', 'No se pudo crear el usuario', 'error');
+      }
     }
   };
+  
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Gestión de Usuarios</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold">Gestión de Usuarios</h2>
+        <button
+         onClick={mostrarFormularioNuevoUsuario}
+         className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded mb-4"
+            >
+        Nuevo Usuario
+        </button>
+      </div>
       <ul className="space-y-2 mt-4">
         {usuarios.map((u) => (
           <li key={u.id} className="flex justify-between items-center border-b p-2">
@@ -94,7 +180,7 @@ function Admin() {
             </span>
             <div className="space-x-2">
               <button
-                onClick={() => setUsuarioEditando(u)}
+                onClick={() => abrirFormularioUsuario(u)}
                 className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
               >
                 Editar
@@ -109,75 +195,6 @@ function Admin() {
           </li>
         ))}
       </ul>
-
-      {usuarioEditando && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl p-6 w-96 shadow-xl relative">
-            <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
-            <form onSubmit={handleActualizarUsuario}>
-              <div className="mb-4">
-                <label className="block mb-1">Nombre</label>
-                <input
-                  type="text"
-                  className="w-full border rounded p-2"
-                  value={usuarioEditando.nombre}
-                  onChange={(e) =>
-                    setUsuarioEditando({
-                      ...usuarioEditando,
-                      nombre: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-1">Email</label>
-                <input
-                  type="email"
-                  className="w-full border rounded p-2"
-                  value={usuarioEditando.email}
-                  onChange={(e) =>
-                    setUsuarioEditando({
-                      ...usuarioEditando,
-                      email: e.target.value,
-                    })
-                  }
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block mb-1">Rol</label>
-                <select
-                  className="w-full border rounded p-2"
-                  value={usuarioEditando.rol}
-                  onChange={(e) =>
-                    setUsuarioEditando({
-                      ...usuarioEditando,
-                      rol: e.target.value,
-                    })
-                  }
-                >
-                  <option value="cliente">Cliente</option>
-                  <option value="admin">Administrador</option>
-                </select>
-              </div>
-              <div className="flex justify-end gap-2">
-                <button
-                  type="button"
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-                  onClick={() => setUsuarioEditando(null)}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Guardar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
