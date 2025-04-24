@@ -1,6 +1,7 @@
 // Admin.jsx
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import AuthContext from "../context/AuthContext";
 import api from "../api";
 
@@ -11,10 +12,7 @@ function Admin() {
   const [usuarioEditando, setUsuarioEditando] = useState(null);
 
   useEffect(() => {
-    console.log("Usuario:", usuario);
-    console.log("Cargando:", cargando);
-
-    if (cargando) return; // 👈 Evita redirección antes de verificar
+    if (cargando) return;
     if (!usuario || usuario.rol !== "admin") {
       navigate("/login");
     } else {
@@ -25,36 +23,63 @@ function Admin() {
           },
         })
         .then((res) => setUsuarios(res.data))
-        .catch((err) => console.error("Error al obtener usuarios", err));
+        .catch((err) => {
+          console.error("Error al obtener usuarios", err);
+          Swal.fire("Error", "No se pudieron cargar los usuarios", "error");
+        });
     }
   }, [usuario, cargando, navigate]);
 
-  // ... lo demás de tu componente (editar, eliminar, renderizado)
-
   const eliminarUsuario = async (id) => {
-    if (!confirm('¿Seguro que quieres eliminar este usuario?')) return;
-    try {
-      await api.delete(`/usuarios/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setUsuarios(usuarios.filter(u => u.id !== id));
-    } catch (error) {
-      console.error('Error al eliminar usuario', error);
+    const confirmacion = await Swal.fire({
+      title: "¿Eliminar usuario?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (confirmacion.isConfirmed) {
+      try {
+        await api.delete(`/usuarios/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setUsuarios(usuarios.filter((u) => u.id !== id));
+        Swal.fire("Eliminado", "El usuario ha sido eliminado.", "success");
+      } catch (error) {
+        console.error("Error al eliminar usuario", error);
+        Swal.fire("Error", "No se pudo eliminar el usuario", "error");
+      }
     }
   };
 
-  const editarUsuario = async (id, datosActualizados) => {
+  const handleActualizarUsuario = async (e) => {
+    e.preventDefault();
     try {
-      const res = await api.put(`/usuarios/${id}`, datosActualizados, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      setUsuarios(usuarios.map(u => u.id === id ? res.data.usuario : u));
+      const res = await api.put(
+        `/usuarios/${usuarioEditando.id}`,
+        usuarioEditando,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setUsuarios((prev) =>
+        prev.map((u) =>
+          u.id === usuarioEditando.id ? res.data.usuario : u
+        )
+      );
+      setUsuarioEditando(null);
+      Swal.fire("Actualizado", "Usuario actualizado correctamente", "success");
     } catch (error) {
-      console.error('Error al actualizar usuario', error);
+      console.error("Error al actualizar usuario", error);
+      Swal.fire("Error", "No se pudo actualizar el usuario", "error");
     }
   };
 
@@ -62,71 +87,97 @@ function Admin() {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Gestión de Usuarios</h2>
       <ul className="space-y-2 mt-4">
-        {usuarios.map(u => (
-          usuarioEditando === u.id ? (
-            <li key={u.id} className="border-b p-2 space-y-2">
-              <input
-                type="text"
-                value={datosEditados.nombre}
-                onChange={e => setDatosEditados({ ...datosEditados, nombre: e.target.value })}
-                className="border rounded p-1 mr-2"
-                placeholder="Nombre"
-              />
-              <input
-                type="email"
-                value={datosEditados.email}
-                onChange={e => setDatosEditados({ ...datosEditados, email: e.target.value })}
-                className="border rounded p-1 mr-2"
-                placeholder="Email"
-              />
-              <select
-                value={datosEditados.rol}
-                onChange={e => setDatosEditados({ ...datosEditados, rol: e.target.value })}
-                className="border rounded p-1 mr-2"
-              >
-                <option value="usuario">Usuario</option>
-                <option value="admin">Administrador</option>
-              </select>
+        {usuarios.map((u) => (
+          <li key={u.id} className="flex justify-between items-center border-b p-2">
+            <span>
+              {u.nombre} - {u.email} - {u.rol}
+            </span>
+            <div className="space-x-2">
               <button
-                onClick={() => {
-                  editarUsuario(u.id, datosEditados);
-                  setUsuarioEditando(null);
-                }}
-                className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-sm"
+                onClick={() => setUsuarioEditando(u)}
+                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
               >
-                Guardar
+                Editar
               </button>
               <button
-                onClick={() => setUsuarioEditando(null)}
-                className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-1 rounded text-sm"
+                onClick={() => eliminarUsuario(u.id)}
+                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
               >
-                Cancelar
+                Eliminar
               </button>
-            </li>
-          ) : (
-            <li key={u.id} className="flex justify-between items-center border-b p-2">
-              <span>{u.nombre} - {u.email} - {u.rol}</span>
-              <div className="space-x-2">
-                <button
-                  onClick={() => {
-                    setUsuarioEditando(u.id);
-                    setDatosEditados({ nombre: u.nombre, email: u.email, rol: u.rol });
-                  }}
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={() => eliminarUsuario(u.id)}
-                  className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
-                >
-                  Eliminar
-                </button>
-              </div>
-            </li>
-          )
+            </div>
+          </li>
         ))}
       </ul>
+
+      {usuarioEditando && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-6 w-96 shadow-xl relative">
+            <h2 className="text-xl font-bold mb-4">Editar Usuario</h2>
+            <form onSubmit={handleActualizarUsuario}>
+              <div className="mb-4">
+                <label className="block mb-1">Nombre</label>
+                <input
+                  type="text"
+                  className="w-full border rounded p-2"
+                  value={usuarioEditando.nombre}
+                  onChange={(e) =>
+                    setUsuarioEditando({
+                      ...usuarioEditando,
+                      nombre: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-1">Email</label>
+                <input
+                  type="email"
+                  className="w-full border rounded p-2"
+                  value={usuarioEditando.email}
+                  onChange={(e) =>
+                    setUsuarioEditando({
+                      ...usuarioEditando,
+                      email: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-1">Rol</label>
+                <select
+                  className="w-full border rounded p-2"
+                  value={usuarioEditando.rol}
+                  onChange={(e) =>
+                    setUsuarioEditando({
+                      ...usuarioEditando,
+                      rol: e.target.value,
+                    })
+                  }
+                >
+                  <option value="cliente">Cliente</option>
+                  <option value="admin">Administrador</option>
+                </select>
+              </div>
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+                  onClick={() => setUsuarioEditando(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Guardar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
