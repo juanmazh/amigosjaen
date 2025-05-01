@@ -14,4 +14,7 @@ export default defineConfig(async () => ({
       },
     },
   },
+  server: {
+    hmr: true, // Asegura que HMR esté habilitado
+  },
 }));
