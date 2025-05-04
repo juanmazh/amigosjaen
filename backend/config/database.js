@@ -7,4 +7,6 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   logging: false,
 });
 
+sequelize.query("ALTER TABLE Publicaciones MODIFY COLUMN etiquetas TEXT;");
+
 module.exports = sequelize;

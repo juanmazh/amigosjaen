@@ -108,3 +108,20 @@ exports.obtenerUsuario = async (req, res) => {
     res.status(500).json({ msg: "Error al obtener usuario" });
   }
 };
+
+// Función para crear una publicación
+exports.crearPublicacion = async (req, res) => {
+  try {
+    const { titulo, contenido, etiquetas } = req.body;
+    const nuevaPublicacion = await Publicacion.create({
+      titulo,
+      contenido,
+      etiquetas, // Guardar etiquetas
+      UsuarioId: req.usuario.id,
+    });
+    res.status(201).json(nuevaPublicacion);
+  } catch (error) {
+    console.error('Error al crear publicación:', error);
+    res.status(500).json({ error: 'Error al crear la publicación' });
+  }
+};
