@@ -33,7 +33,7 @@ function CrearPublicacion({ onPublicacionCreada }) {
       const res = await api.post("/publicaciones", {
         titulo,
         contenido,
-        etiquetas,
+        etiquetas, // Enviar el array directamente
         usuarioId: usuario.id,
       });
 

@@ -5,12 +5,17 @@ const Usuario = require('./Usuario');
 const Publicacion = sequelize.define('Publicacion', {
   titulo: { type: DataTypes.STRING, allowNull: false },
   contenido: { type: DataTypes.TEXT, allowNull: false },
-  etiquetas: { type: DataTypes.TEXT, allowNull: true, get() {
-    const rawValue = this.getDataValue('etiquetas');
-    return rawValue ? JSON.parse(rawValue) : [];
-  }, set(value) {
-    this.setDataValue('etiquetas', JSON.stringify(value));
-  }},
+  etiquetas: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    get() {
+      const rawValue = this.getDataValue('etiquetas');
+      return rawValue ? rawValue.split(',') : [];
+    },
+    set(value) {
+      this.setDataValue('etiquetas', Array.isArray(value) ? value.join(',') : value);
+    }
+  },
 });
 
 Usuario.hasMany(Publicacion);

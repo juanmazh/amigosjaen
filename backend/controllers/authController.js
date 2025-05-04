@@ -116,7 +116,7 @@ exports.crearPublicacion = async (req, res) => {
     const nuevaPublicacion = await Publicacion.create({
       titulo,
       contenido,
-      etiquetas, // Guardar etiquetas
+      etiquetas: etiquetas.join(','), // Convertir el array de etiquetas a una cadena separada por comas
       UsuarioId: req.usuario.id,
     });
     res.status(201).json(nuevaPublicacion);
