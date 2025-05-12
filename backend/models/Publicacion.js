@@ -1,24 +1,19 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Usuario = require('./Usuario');
+const Etiqueta = require('./Etiqueta');
 
 const Publicacion = sequelize.define('Publicacion', {
   titulo: { type: DataTypes.STRING, allowNull: false },
   contenido: { type: DataTypes.TEXT, allowNull: false },
-  etiquetas: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-    get() {
-      const rawValue = this.getDataValue('etiquetas');
-      return rawValue ? rawValue.split(',') : [];
-    },
-    set(value) {
-      this.setDataValue('etiquetas', Array.isArray(value) ? value.join(',') : value);
-    }
-  },
+}, {
+  tableName: 'Publicaciones', // Forzar el nombre de la tabla
 });
 
 Usuario.hasMany(Publicacion);
 Publicacion.belongsTo(Usuario);
+
+Publicacion.belongsToMany(Etiqueta, { through: 'PublicacionEtiquetas', as: 'tags' });
+Etiqueta.belongsToMany(Publicacion, { through: 'PublicacionEtiquetas', as: 'publicaciones' });
 
 module.exports = Publicacion;

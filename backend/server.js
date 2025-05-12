@@ -1,16 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const sequelize = require('./config/database');
-
-// Modelos
-const Usuario = require('./models/Usuario');
-const Publicacion = require('./models/Publicacion');
+const { sequelize, Usuario, Publicacion, Etiqueta } = require('./models');
 
 // Rutas
 const authRoutes = require('./routes/auth');
 const usuariosRoutes = require('./routes/usuarios');
 const publicacionesRoutes = require('./routes/publicaciones');
+const etiquetasRoutes = require('./routes/etiquetas');
 
 const app = express();
 app.use(express.json());
@@ -25,10 +22,19 @@ app.use('/api/usuarios', usuariosRoutes); // En este archivo puedes proteger con
 // Rutas públicas
 app.use('/api/publicaciones', publicacionesRoutes);
 app.use('/api/auth', authRoutes); // Autenticación (login, registro, etc.)
+app.use('/api/etiquetas', etiquetasRoutes);
 
 // Sincronizar base de datos
-sequelize.sync({ force: false }).then(() => console.log('Base de datos sincronizada'));
+sequelize.sync({ force: false }).then(async () => {
+  console.log('Base de datos sincronizada');
+  
+  // Inspeccionar métodos del modelo Publicacion
+  const publicacion = await Publicacion.build();
+  console.log('Métodos disponibles en Publicacion:', Object.keys(publicacion.__proto__));
+
+  // Continuar con el servidor
+  app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+});
 
 // Puerto
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));

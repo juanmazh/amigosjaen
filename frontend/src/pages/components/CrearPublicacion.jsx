@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import AuthContext from "../../context/AuthContext";
 import api from "../../api";
 import Swal from "sweetalert2";
@@ -9,6 +9,19 @@ function CrearPublicacion({ onPublicacionCreada }) {
   const [contenido, setContenido] = useState("");
   const [etiquetas, setEtiquetas] = useState([]);
   const [etiquetaActual, setEtiquetaActual] = useState("");
+
+  useEffect(() => {
+    // Cargar etiquetas existentes desde el backend
+    const cargarEtiquetas = async () => {
+      try {
+        const res = await api.get("/etiquetas");
+        setEtiquetas(res.data.map(etiqueta => etiqueta.nombre));
+      } catch (err) {
+        console.error("Error al cargar etiquetas:", err);
+      }
+    };
+    cargarEtiquetas();
+  }, []);
 
   const handleEtiquetaKeyDown = (e) => {
     if (e.key === " " && etiquetaActual.trim() !== "") {
@@ -33,7 +46,7 @@ function CrearPublicacion({ onPublicacionCreada }) {
       const res = await api.post("/publicaciones", {
         titulo,
         contenido,
-        etiquetas, // Enviar el array directamente
+        etiquetas: etiquetas.map((etiqueta) => etiqueta.trim()), // Enviar etiquetas como array de strings
         usuarioId: usuario.id,
       });
 

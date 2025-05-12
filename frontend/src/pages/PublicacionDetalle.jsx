@@ -45,13 +45,13 @@ function PublicacionDetalle() {
           <h2 className="text-3xl font-bold mb-4">{publicacion.titulo}</h2>
           <p className="text-gray-600 mb-4">{publicacion.contenido}</p>
           <p className="text-sm text-gray-400">Autor: {publicacion.autorNombre}</p>
-          {publicacion.etiquetas && publicacion.etiquetas.length > 0 && (
+          {publicacion.tags && publicacion.tags.length > 0 && (
             <div className="mt-4">
               <h4 className="text-lg font-semibold mb-2">Etiquetas:</h4>
               <div className="flex flex-wrap gap-2">
-                {publicacion.etiquetas.map((etiqueta, index) => (
+                {publicacion.tags.map((tag, index) => (
                   <span key={index} className="bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-sm">
-                    {etiqueta}
+                    {tag.nombre}
                   </span>
                 ))}
               </div>
