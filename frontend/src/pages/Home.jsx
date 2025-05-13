@@ -30,7 +30,7 @@ function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col justify-between bg-gradient-to-br from-pink-100 to-purple-200">
       <Header />
       {/* Contenido principal */}
       <main className="p-4 max-w-4xl mx-auto">
