@@ -8,7 +8,7 @@ import AuthContext from "../../context/AuthContext";
 const MySwal = withReactContent(Swal);
 
 export default function UserMenu({ usuario }) {
-  const { cerrarSesion } = useContext(AuthContext);
+  const { logout } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef(null);
@@ -45,8 +45,8 @@ export default function UserMenu({ usuario }) {
     });
 
     if (res.isConfirmed) {
-      cerrarSesion();
-      navigate("/login");
+      logout();
+      navigate("/");
     }
   };
 

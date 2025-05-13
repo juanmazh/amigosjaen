@@ -1,10 +1,12 @@
-// src/pages/Home.jsx
+// src/import Header from "./components/Header";ages/Home.jsx
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import api from '../api';
 import AuthContext from '../context/AuthContext';
 import UserMenu from './components/UserMenu';
 import CrearPublicacion from "./components/CrearPublicacion";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function Home() {
   const [publicaciones, setPublicaciones] = useState([]);
@@ -29,33 +31,7 @@ function Home() {
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
-      {/* Header */}
-      <header className="bg-white shadow p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-purple-600">
-          <Link to="/">AmigosJaén</Link>
-        </h1>
-        {usuario && (
-          <div className="mb-4">
-            <button
-              onClick={() => setMostrarFormulario(!mostrarFormulario)}
-              className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-purple-500 text-white px-4 py-2 text-base font-medium hover:bg-purple-600"
-            >
-              {mostrarFormulario ? "Cancelar" : "Crear publicación"}
-            </button>
-          </div>
-        )}
-        <div className="space-x-4">
-          {!usuario ? (
-            <>
-              <Link to="/login" className="text-sky-500 hover:underline">Iniciar Sesión</Link>
-              <Link to="/register" className="text-sky-500 hover:underline">Registrarse</Link>
-            </>
-          ) : (
-            <UserMenu usuario={usuario} />
-          )}
-        </div>
-      </header>
-
+      <Header />
       {/* Contenido principal */}
       <main className="p-4 max-w-4xl mx-auto">
         <h2 className="text-xl font-semibold mb-4">
@@ -69,6 +45,15 @@ function Home() {
           </div>
         )}
 
+        <div className="mb-4">
+          <button
+            onClick={() => navigate('/crear-publicacion')}
+            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-green-500 text-white px-4 py-2 text-base font-medium hover:bg-green-600"
+          >
+           Crea una publicación
+          </button>
+        </div>
+
         <h2 className="text-xl font-semibold mb-4">Últimas publicaciones</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {publicaciones.map(pub => (
@@ -81,10 +66,7 @@ function Home() {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-white shadow p-4 text-center text-sm text-gray-500">
-        © 2025 AmigosJaén. Todos los derechos reservados.
-      </footer>
+      <Footer />
     </div>
   );
 }

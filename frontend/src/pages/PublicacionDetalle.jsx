@@ -4,6 +4,8 @@ import { useEffect, useState, useContext } from 'react';
 import api from '../api';
 import AuthContext from '../context/AuthContext';
 import UserMenu from './components/UserMenu';
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 function PublicacionDetalle() {
   const { id } = useParams();
@@ -22,25 +24,8 @@ function PublicacionDetalle() {
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
-      {/* Header */}
-      <header className="bg-white shadow p-4 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-purple-600">
-          <Link to="/">AmigosJaén</Link>
-        </h1>
-        <div className="space-x-4">
-          {!usuario ? (
-            <>
-              <Link to="/login" className="text-sky-500 hover:underline">Iniciar Sesión</Link>
-              <Link to="/register" className="text-sky-500 hover:underline">Registrarse</Link>
-            </>
-          ) : (
-            <UserMenu usuario={usuario} />
-          )}
-        </div>
-      </header>
-
-      {/* Contenido principal */}
-      <main className="p-4 max-w-4xl mx-auto">
+      <Header />
+      <main className="flex-grow p-4 max-w-4xl mx-auto">
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
           <h2 className="text-3xl font-bold mb-4">{publicacion.titulo}</h2>
           <p className="text-gray-600 mb-4">{publicacion.contenido}</p>
@@ -64,11 +49,7 @@ function PublicacionDetalle() {
           <p className="text-gray-500">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="bg-white shadow p-4 text-center text-sm text-gray-500">
-        © 2025 AmigosJaén. Todos los derechos reservados.
-      </footer>
+      <Footer />
     </div>
   );
 }

@@ -5,6 +5,9 @@ import Admin from "./pages/Admin";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import CrearPublicacionPage from "./pages/CrearPublicacionPage";
+import Foro from "./pages/Foro";
+import Header from "./pages/components/Header";
 
 function App() {
   return (
@@ -13,6 +16,8 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/crear-publicacion" element={<CrearPublicacionPage />} />
+      <Route path="/foro" element={<Foro />} />
     </Routes>
   );
 }

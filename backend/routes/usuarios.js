@@ -73,7 +73,7 @@ router.post('/', verificarToken, soloAdmin, async (req, res) => {
     const nuevoUsuario = await Usuario.create({
       nombre,
       email,
-      password: hashedPassword,
+      contraseña: hashedPassword, // Cambiado de 'password' a 'contraseña'
       rol,
     });
 

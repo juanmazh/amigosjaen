@@ -75,6 +75,12 @@ function Admin() {
             defaultValue={usuarioInicial?.email || ""}
             placeholder="Email"
           />
+          <input
+            id="swal-password"
+            className="swal2-input"
+            type="password"
+            placeholder="Contraseña"
+          />
           <select id="swal-rol" className="swal2-select" defaultValue={usuarioInicial?.rol || "cliente"}>
             <option value="cliente">Cliente</option>
             <option value="admin">Administrador</option>
@@ -86,13 +92,14 @@ function Admin() {
       preConfirm: () => {
         const nombre = document.getElementById("swal-nombre").value;
         const email = document.getElementById("swal-email").value;
+        const password = document.getElementById("swal-password").value;
         const rol = document.getElementById("swal-rol").value;
 
-        if (!nombre || !email || !rol) {
+        if (!nombre || !email || !password || !rol) {
           Swal.showValidationMessage("Todos los campos son obligatorios");
         }
 
-        return { nombre, email, rol };
+        return { nombre, email, password, rol };
       },
     }).then(async (result) => {
       if (result.isConfirmed && result.value) {
@@ -120,81 +127,61 @@ function Admin() {
     });
   };
 
-  const mostrarFormularioNuevoUsuario = async () => {
-    const { value: formValues } = await MySwal.fire({
-      title: 'Crear nuevo usuario',
-      html:
-        `<input id="swal-input-nombre" class="swal2-input" placeholder="Nombre">` +
-        `<input id="swal-input-email" class="swal2-input" placeholder="Email">` +
-        `<input id="swal-input-password" type="password" class="swal2-input" placeholder="Contraseña">` +
-        `<select id="swal-input-rol" class="swal2-select">
-          <option value="cliente">Cliente</option>
-          <option value="admin">Administrador</option>
-        </select>`,
-      focusConfirm: false,
-      showCancelButton: true,
-      confirmButtonText: 'Crear',
-      preConfirm: () => {
-        const nombre = document.getElementById('swal-input-nombre').value;
-        const email = document.getElementById('swal-input-email').value;
-        const password = document.getElementById('swal-input-password').value;
-        const rol = document.getElementById('swal-input-rol').value;
-  
-        if (!nombre || !email || !password) {
-          Swal.showValidationMessage('Todos los campos son obligatorios');
-          return;
-        }
-        return { nombre, email, password, rol };
-      }
-    });
-  
-    if (formValues) {
-      try {
-        const res = await api.post('/auth/register', formValues);
-        setUsuarios([...usuarios, res.data.usuario]);
-        Swal.fire('Usuario creado', '', 'success');
-      } catch (error) {
-        console.error('Error al crear usuario', error);
-        Swal.fire('Error', 'No se pudo crear el usuario', 'error');
-      }
-    }
-  };
-  
-
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Gestión de Usuarios</h2>
-        <button
-         onClick={mostrarFormularioNuevoUsuario}
-         className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded mb-4"
-            >
-        Nuevo Usuario
-        </button>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <div className="bg-white shadow rounded-lg p-6 mb-6 flex justify-between items-center">
+        <h2 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
+        <div className="space-x-4">
+          <button
+            onClick={() => abrirFormularioUsuario()}
+            className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-2 rounded-lg shadow-md hover:from-purple-600 hover:to-purple-800 transition-all duration-300"
+          >
+            Nuevo Usuario
+          </button>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-gradient-to-r from-gray-500 to-gray-700 text-white px-4 py-2 rounded-lg shadow-md hover:from-gray-600 hover:to-gray-800 transition-all duration-300"
+          >
+            Volver al Inicio
+          </button>
+        </div>
       </div>
-      <ul className="space-y-2 mt-4">
-        {usuarios.map((u) => (
-          <li key={u.id} className="flex justify-between items-center border-b p-2">
-            <span>
-              {u.nombre} - {u.email} - {u.rol}
-            </span>
-            <div className="space-x-2">
-              <button
-                onClick={() => abrirFormularioUsuario(u)}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm"
-              >
-                Editar
-              </button>
-              <button
-                onClick={() => eliminarUsuario(u.id)}
-                className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
-              >
-                Eliminar
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+
+      <div className="bg-white shadow rounded-lg p-6">
+        <table className="w-full table-auto border-collapse">
+          <thead>
+            <tr className="bg-gray-200 text-gray-700">
+              <th className="px-4 py-2 border">Nombre</th>
+              <th className="px-4 py-2 border">Email</th>
+              <th className="px-4 py-2 border">Rol</th>
+              <th className="px-4 py-2 border">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {usuarios.map((u) => (
+              <tr key={u.id} className="text-gray-700 hover:bg-gray-100">
+                <td className="px-4 py-2 border">{u.nombre}</td>
+                <td className="px-4 py-2 border">{u.email}</td>
+                <td className="px-4 py-2 border">{u.rol}</td>
+                <td className="px-4 py-2 border text-center">
+                  <button
+                    onClick={() => abrirFormularioUsuario(u)}
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mr-2"
+                  >
+                    Editar
+                  </button>
+                  <button
+                    onClick={() => eliminarUsuario(u.id)}
+                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                  >
+                    Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
