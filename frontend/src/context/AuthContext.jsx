@@ -19,7 +19,6 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        console.log("Token que se enviará:", token);
         // const res = await axios.get('http://localhost:5000/api/auth/usuario', {
         const res = await axios.get('https://amigosjaen.onrender.com/api/auth/usuario', {
           headers: {

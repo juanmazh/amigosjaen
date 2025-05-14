@@ -20,10 +20,6 @@ function Home() {
       .catch(err => console.error('Error al obtener publicaciones:', err));
   }, []);
 
-  useEffect(() => {
-    console.log('Usuario en Home:', usuario);
-  }, [usuario]);
-
   const handlePublicacionCreada = (nueva) => {
     setPublicaciones([nueva, ...publicaciones]);
     setMostrarFormulario(false);
