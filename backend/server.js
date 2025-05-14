@@ -11,8 +11,12 @@ const etiquetasRoutes = require('./routes/etiquetas');
 
 const app = express();
 app.use(express.json());
-app.use(cors());
-
+app.use(cors({
+  origin: 'https://amigosjaen.netlify.app', // Permitir solicitudes desde este dominio
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+  credentials: true // Permitir envío de cookies o credenciales
+}));
+//app.use(cors()); esto funciona en localhost, pero no en producción
 // Ruta de prueba
 app.get('/', (req, res) => res.send('API funcionando'));
 
