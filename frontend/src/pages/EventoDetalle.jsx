@@ -37,14 +37,27 @@ function EventoDetalle() {
           {evento.activo ? 'Activo' : 'Inactivo'}
         </p>
         <div className="grid grid-cols-2 gap-2 mt-4">
-          {evento.imagenes && evento.imagenes.map((imagen, index) => (
-            <img
-              key={index}
-              src={imagen}
-              alt={`Evento ${evento.titulo}`}
-              className="w-full h-64 object-cover rounded"
-            />
-          ))}
+          {/* Asegura que imagenes sea un array */}
+          {(() => {
+            let imagenes = [];
+            if (Array.isArray(evento.imagenes)) {
+              imagenes = evento.imagenes;
+            } else if (evento.imagenes) {
+              try {
+                imagenes = JSON.parse(evento.imagenes);
+              } catch {
+                imagenes = [];
+              }
+            }
+            return imagenes.map((imagen, index) => (
+              <img
+                key={index}
+                src={imagen}
+                alt={`Evento ${evento.titulo}`}
+                className="w-full h-64 object-cover rounded"
+              />
+            ));
+          })()}
         </div>
       </div>
       <Footer />
