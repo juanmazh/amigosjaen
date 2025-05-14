@@ -25,12 +25,12 @@ const Evento = sequelize.define("Evento", {
     defaultValue: 0,
   },
   imagenes: {
-  type: DataTypes.JSON, // ✅ Compatible con MySQL y almacena arrays
-  allowNull: true,
-},
+    type: DataTypes.TEXT, // Cambiado de JSON a TEXT para compatibilidad
+    allowNull: true,
+  },
   activo: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: true,
+    type: DataTypes.TINYINT, // Cambiado de BOOLEAN a TINYINT
+    defaultValue: 1, // Cambiado de true a 1
   },
 });
 
