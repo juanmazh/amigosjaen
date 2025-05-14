@@ -12,7 +12,7 @@ const etiquetasRoutes = require('./routes/etiquetas');
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: 'https://amigosjaen.netlify.app', // Permitir solicitudes desde este dominio
+  origin: ['https://amigosjaen.netlify.app', 'https://amigosjaen.onrender.com'], // Permitir solicitudes desde ambos dominios
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
   credentials: true // Permitir envío de cookies o credenciales
 }));
