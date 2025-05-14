@@ -20,6 +20,12 @@ function Header() {
         >
           Foro
         </button>
+        <button
+          onClick={() => navigate('/eventos')}
+          className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300"
+        >
+          Eventos
+        </button>
       </div>
       <div className="space-x-4">
         {!usuario ? (

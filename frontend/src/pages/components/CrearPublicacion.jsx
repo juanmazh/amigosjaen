@@ -9,13 +9,14 @@ function CrearPublicacion({ onPublicacionCreada }) {
   const [contenido, setContenido] = useState("");
   const [etiquetas, setEtiquetas] = useState([]);
   const [etiquetaActual, setEtiquetaActual] = useState("");
+  const [etiquetasExistentes, setEtiquetasExistentes] = useState([]);
 
   useEffect(() => {
     // Cargar etiquetas existentes desde el backend
     const cargarEtiquetas = async () => {
       try {
         const res = await api.get("/etiquetas");
-        setEtiquetas(res.data.map(etiqueta => etiqueta.nombre));
+        setEtiquetasExistentes(res.data.map((etiqueta) => etiqueta.nombre));
       } catch (err) {
         console.error("Error al cargar etiquetas:", err);
       }
@@ -33,6 +34,11 @@ function CrearPublicacion({ onPublicacionCreada }) {
 
   const handleEliminarEtiqueta = (index) => {
     setEtiquetas(etiquetas.filter((_, i) => i !== index));
+  };
+
+  const handleSeleccionarEtiqueta = (e) => {
+    const seleccionadas = Array.from(e.target.selectedOptions, (option) => option.value);
+    setEtiquetas([...new Set([...etiquetas, ...seleccionadas])]);
   };
 
   const handleSubmit = async (e) => {
@@ -82,6 +88,18 @@ function CrearPublicacion({ onPublicacionCreada }) {
           onChange={(e) => setContenido(e.target.value)}
         />
         <div className="space-y-2">
+          Etiquetas ya creadas
+          <select
+            multiple
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            onChange={handleSeleccionarEtiqueta}
+          >
+            {etiquetasExistentes.map((etiqueta, index) => (
+              <option key={index} value={etiqueta}>
+                {etiqueta}
+              </option>
+            ))}
+          </select>
           <div className="flex flex-wrap gap-2">
             {etiquetas.map((etiqueta, index) => (
               <span

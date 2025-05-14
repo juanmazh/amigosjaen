@@ -8,15 +8,18 @@ const authRoutes = require('./routes/auth');
 const usuariosRoutes = require('./routes/usuarios');
 const publicacionesRoutes = require('./routes/publicaciones');
 const etiquetasRoutes = require('./routes/etiquetas');
+const eventosRoutes = require('./routes/eventos');
 
 const app = express();
 app.use(express.json());
 app.use(cors({
-  origin: ['https://amigosjaen.netlify.app', 'https://amigosjaen.onrender.com'], // Permitir solicitudes desde ambos dominios
-  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
-  credentials: true // Permitir envío de cookies o credenciales
+  origin: [
+    'http://localhost:5173', // Frontend en desarrollo
+    'https://amigosjaen.netlify.app', // Frontend en producción
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // Permitir envío de cookies o credenciales
 }));
-//app.use(cors()); esto funciona en localhost, pero no en producción
 // Ruta de prueba
 app.get('/', (req, res) => res.send('API funcionando'));
 
@@ -27,6 +30,7 @@ app.use('/api/usuarios', usuariosRoutes); // En este archivo puedes proteger con
 app.use('/api/publicaciones', publicacionesRoutes);
 app.use('/api/auth', authRoutes); // Autenticación (login, registro, etc.)
 app.use('/api/etiquetas', etiquetasRoutes);
+app.use('/api/eventos', eventosRoutes);
 
 // Sincronizar base de datos
 sequelize.sync({ force: false }).then(async () => {

@@ -8,6 +8,9 @@ import Register from "./pages/Register";
 import CrearPublicacionPage from "./pages/CrearPublicacionPage";
 import Foro from "./pages/Foro";
 import Header from "./pages/components/Header";
+import Eventos from "./pages/Eventos";
+import CrearEventoPage from "./pages/CrearEventoPage";
+import EventoDetalle from "./pages/EventoDetalle";
 
 function App() {
   return (
@@ -18,6 +21,9 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/crear-publicacion" element={<CrearPublicacionPage />} />
       <Route path="/foro" element={<Foro />} />
+      <Route path="/eventos" element={<Eventos />} />
+      <Route path="/crear-evento" element={<CrearEventoPage />} />
+      <Route path="/eventos/:id" element={<EventoDetalle />} />
     </Routes>
   );
 }

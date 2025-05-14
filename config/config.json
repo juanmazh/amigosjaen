@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "root",
+    "database": "amigosjaen",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "root",
+    "database": "amigosjaen_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "sql7777209",
+    "password": "IMDYJjbYQW",
+    "database": "sql7777209",
+    "host": "sql7.freesqldatabase.com",
+    "dialect": "mysql"
+  }
+}
