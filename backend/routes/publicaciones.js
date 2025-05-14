@@ -68,7 +68,7 @@ router.get('/:id', async (req, res) => {
 // Modificar la ruta de creación de publicaciones para manejar etiquetas
 router.post('/', async (req, res) => {
   try {
-    console.log('Datos recibidos:', req.body); // Log para depurar los datos recibidos
+    console.log('Datos recibidos en el backend:', req.body); // Log para depurar los datos recibidos
     const { titulo, contenido, usuarioId, etiquetas } = req.body;
 
     if (!titulo || !contenido || !usuarioId) {

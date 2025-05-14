@@ -42,6 +42,13 @@ function CrearPublicacion({ onPublicacionCreada }) {
       return Swal.fire("Error", "Todos los campos son obligatorios", "error");
     }
 
+    console.log('Datos enviados desde el frontend:', {
+      titulo,
+      contenido,
+      etiquetas: etiquetas.map((etiqueta) => etiqueta.trim()),
+      usuarioId: usuario.id,
+    });
+
     try {
       const res = await api.post("/publicaciones", {
         titulo,
