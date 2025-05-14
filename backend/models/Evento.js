@@ -25,9 +25,9 @@ const Evento = sequelize.define("Evento", {
     defaultValue: 0,
   },
   imagenes: {
-    type: DataTypes.ARRAY(DataTypes.STRING), // Almacena URLs de imágenes
-    allowNull: true,
-  },
+  type: DataTypes.JSON, // ✅ Compatible con MySQL y almacena arrays
+  allowNull: true,
+},
   activo: {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
