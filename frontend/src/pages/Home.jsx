@@ -1,4 +1,4 @@
-// src/import Header from "./components/Header";ages/Home.jsx
+// src/pages/Home.jsx
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useContext } from 'react';
 import api from '../api';
@@ -7,6 +7,7 @@ import UserMenu from './components/UserMenu';
 import CrearPublicacion from "./components/CrearPublicacion";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import EventosHome from "./components/EventosHome";
 
 function Home() {
   const [publicaciones, setPublicaciones] = useState([]);
@@ -50,6 +51,8 @@ function Home() {
           </button>
         </div>
 
+        <h2 className="text-xl font-semibold mb-4">Últimos eventos</h2>
+        <EventosHome />
         <h2 className="text-xl font-semibold mb-4">Últimas publicaciones</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {publicaciones.map(pub => (

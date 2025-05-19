@@ -42,7 +42,7 @@ function EventoDetalle() {
     }
   };
 
-  if (!evento || !usuario) {
+  if (!evento) {
     return <p>Cargando evento...</p>;
   }
 
@@ -206,6 +206,9 @@ function EventoDetalle() {
                 >
                   Inscribirse al evento
                 </button>
+              )}
+              {!usuario && (
+                <div className="text-yellow-700 font-semibold mt-2">Inicia sesión para inscribirte al evento</div>
               )}
               {usuario && yaInscrito && (
                 <div className="text-green-700 font-semibold mt-2">Ya estás inscrito en este evento</div>
