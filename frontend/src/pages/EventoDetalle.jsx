@@ -21,14 +21,17 @@ function EventoDetalle() {
         // Obtener asistentes
         const resAsist = await api.get(`/eventos/${id}/asistentes`);
         setAsistentes(resAsist.data);
-        if (usuario) {
+        if (usuario && resAsist.data) {
           setYaInscrito(resAsist.data.some(a => a.id === usuario.id));
+        } else {
+          setYaInscrito(false);
         }
       } catch (err) {
         console.error("Error al cargar el evento:", err);
       }
     };
     cargarEvento();
+    // eslint-disable-next-line
   }, [id, usuario]);
 
   const inscribirse = async () => {
