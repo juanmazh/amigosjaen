@@ -1,7 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Usuario = require("./Usuario");
-const Evento = require("./Evento");
 
 const AsistentesEventos = sequelize.define("AsistentesEventos", {
   id: {
@@ -12,17 +10,18 @@ const AsistentesEventos = sequelize.define("AsistentesEventos", {
   usuarioId: {
     type: DataTypes.INTEGER,
     references: {
-      model: Usuario,
+      model: "Usuarios",
       key: "id",
     },
   },
   eventoId: {
     type: DataTypes.INTEGER,
     references: {
-      model: Evento,
+      model: "Eventos",
       key: "id",
     },
   },
 });
 
 module.exports = AsistentesEventos;
+// Elimino las relaciones directas para evitar referencias circulares, ahora están en models/index.js

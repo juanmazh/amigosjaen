@@ -88,19 +88,9 @@ function CrearPublicacion({ onPublicacionCreada }) {
           onChange={(e) => setContenido(e.target.value)}
         />
         <div className="space-y-2">
-          Etiquetas ya creadas
-          <select
-            multiple
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            onChange={handleSeleccionarEtiqueta}
-          >
-            {etiquetasExistentes.map((etiqueta, index) => (
-              <option key={index} value={etiqueta}>
-                {etiqueta}
-              </option>
-            ))}
-          </select>
-          <div className="flex flex-wrap gap-2">
+          <label className="block text-sm font-medium text-gray-700">Etiquetas</label>
+          {/* Chips de etiquetas seleccionadas */}
+          <div className="flex flex-wrap gap-2 mb-2">
             {etiquetas.map((etiqueta, index) => (
               <span
                 key={index}
@@ -117,14 +107,54 @@ function CrearPublicacion({ onPublicacionCreada }) {
               </span>
             ))}
           </div>
+          {/* Input para añadir etiquetas con sugerencias */}
           <input
             type="text"
-            placeholder="Escribe una etiqueta y pulsa espacio"
+            placeholder="Añade una etiqueta y pulsa Enter"
             className="w-full border border-gray-300 rounded px-3 py-2"
             value={etiquetaActual}
-            onChange={(e) => setEtiquetaActual(e.target.value)}
-            onKeyDown={handleEtiquetaKeyDown}
+            onChange={e => setEtiquetaActual(e.target.value)}
+            onKeyDown={e => {
+              if ((e.key === 'Enter' || e.key === ',') && etiquetaActual.trim() !== '') {
+                e.preventDefault();
+                const nueva = etiquetaActual.trim();
+                if (!etiquetas.includes(nueva)) {
+                  setEtiquetas([...etiquetas, nueva]);
+                }
+                setEtiquetaActual('');
+              }
+            }}
+            list="etiquetas-sugeridas"
+            autoComplete="off"
           />
+          {/* Sugerencias de etiquetas existentes (datalist nativo) */}
+          <datalist id="etiquetas-sugeridas">
+            {etiquetasExistentes
+              .filter(etq => !etiquetas.includes(etq) && etq.toLowerCase().includes(etiquetaActual.toLowerCase()))
+              .map((etq, idx) => (
+                <option key={idx} value={etq} />
+              ))}
+          </datalist>
+          <p className="text-xs text-gray-500">Sugerencias: empieza a escribir y selecciona con Enter o haz clic en una sugerencia.</p>
+          {/* Sugerencias personalizadas tipo dropdown (mejor UX que datalist nativo) */}
+          {etiquetaActual && etiquetasExistentes.filter(etq => !etiquetas.includes(etq) && etq.toLowerCase().includes(etiquetaActual.toLowerCase())).length > 0 && (
+            <div className="border border-gray-200 rounded bg-white shadow p-2 mt-1 max-h-32 overflow-y-auto z-10">
+              {etiquetasExistentes
+                .filter(etq => !etiquetas.includes(etq) && etq.toLowerCase().includes(etiquetaActual.toLowerCase()))
+                .map((etq, idx) => (
+                  <div
+                    key={idx}
+                    className="cursor-pointer px-2 py-1 hover:bg-purple-100 rounded"
+                    onMouseDown={() => {
+                      setEtiquetas([...etiquetas, etq]);
+                      setEtiquetaActual('');
+                    }}
+                  >
+                    {etq}
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
         <button
           type="submit"

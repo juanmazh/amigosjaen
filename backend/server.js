@@ -12,6 +12,7 @@ const eventosRoutes = require('./routes/eventos');
 
 const app = express();
 app.use(express.json());
+// Mover la configuración de CORS ANTES de las rutas y de cualquier otro middleware
 app.use(cors({
   origin: [
     'http://localhost:5173', // Frontend en desarrollo

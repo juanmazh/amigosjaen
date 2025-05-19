@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
- baseURL: 'https://amigosjaen.onrender.com/api' // en caso de producción
+baseURL: 'https://amigosjaen.onrender.com/api' // en caso de producción
  // baseURL: 'http://localhost:5000/api' // Cambiado para desarrollo local
 });
 

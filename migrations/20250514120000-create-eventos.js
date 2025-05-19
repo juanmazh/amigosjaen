@@ -41,6 +41,10 @@ module.exports = {
         onUpdate: "CASCADE",
         onDelete: "SET NULL",
       },
+      localizacion: {
+        type: Sequelize.STRING, // Puede ser string de dirección o coordenadas
+        allowNull: true,
+      },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,

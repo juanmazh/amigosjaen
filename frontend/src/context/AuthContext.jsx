@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-       // const res = await axios.get('http://localhost:5000/api/auth/usuario', {
+       //const res = await axios.get('http://localhost:5000/api/auth/usuario', {
        const res = await axios.get('https://amigosjaen.onrender.com/api/auth/usuario', {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -41,7 +41,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = async (email, contraseña) => {
-    // const res = await axios.post('http://localhost:5000/api/auth/login', {
+     //const res = await axios.post('http://localhost:5000/api/auth/login', {
     const res = await axios.post('https://amigosjaen.onrender.com/api/auth/login', {
       email,
       contraseña,

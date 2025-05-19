@@ -1,14 +1,23 @@
 const express = require('express');
 const router = express.Router();
 const { Publicacion, Usuario, Etiqueta } = require('../models');
+const verificarToken = require("../middleware/verificarToken");
 
 router.get('/', async (req, res) => {
   try {
     const publicaciones = await Publicacion.findAll({
-      include: {
-        model: Usuario,
-        attributes: ['nombre'],
-      },
+      include: [
+        {
+          model: Usuario,
+          attributes: ['nombre'],
+        },
+        {
+          model: Etiqueta,
+          as: 'tags',
+          attributes: ['id', 'nombre'],
+          through: { attributes: [] }, // No incluir datos de la tabla intermedia
+        },
+      ],
       order: [['createdAt', 'DESC']]
     });
 
@@ -17,6 +26,7 @@ router.get('/', async (req, res) => {
       titulo: pub.titulo,
       contenido: pub.contenido,
       autorNombre: pub.Usuario.nombre,
+      tags: pub.tags ? pub.tags.map(tag => ({ id: tag.id, nombre: tag.nombre })) : [],
     }));
 
     res.json(formateadas);
@@ -134,6 +144,26 @@ router.get('/etiquetas', async (req, res) => {
   } catch (err) {
     console.error('Error al obtener etiquetas:', err);
     res.status(500).json({ msg: 'Error al obtener etiquetas' });
+  }
+});
+
+// Eliminar una publicación (solo el dueño puede)
+router.delete('/:id', verificarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const publicacion = await Publicacion.findByPk(id);
+    if (!publicacion) {
+      return res.status(404).json({ msg: 'Publicación no encontrada' });
+    }
+    // Solo el dueño puede borrar
+    if (publicacion.UsuarioId !== req.usuario.id) {
+      return res.status(403).json({ msg: 'No tienes permiso para borrar esta publicación' });
+    }
+    await publicacion.destroy();
+    res.status(200).json({ msg: 'Publicación eliminada correctamente' });
+  } catch (err) {
+    console.error('Error al eliminar publicación:', err);
+    res.status(500).json({ msg: 'Error al eliminar publicación' });
   }
 });
 

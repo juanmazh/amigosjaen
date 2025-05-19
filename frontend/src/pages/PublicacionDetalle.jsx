@@ -6,6 +6,7 @@ import AuthContext from '../context/AuthContext';
 import UserMenu from './components/UserMenu';
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Swal from "sweetalert2";
 
 function PublicacionDetalle() {
   const { id } = useParams();
@@ -41,6 +42,38 @@ function PublicacionDetalle() {
                 ))}
               </div>
             </div>
+          )}
+
+          {/* Botón de borrar si el usuario es el autor */}
+          {usuario && usuario.nombre === publicacion.autorNombre && (
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 mt-4"
+              onClick={async () => {
+                const confirm = await Swal.fire({
+                  title: '¿Eliminar publicación?',
+                  text: 'Esta acción no se puede deshacer',
+                  icon: 'warning',
+                  showCancelButton: true,
+                  confirmButtonText: 'Sí, borrar',
+                  cancelButtonText: 'Cancelar',
+                });
+                if (confirm.isConfirmed) {
+                  try {
+                    await api.delete(`/publicaciones/${publicacion.id}`, {
+                      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                    });
+                    Swal.fire('Eliminada', 'La publicación ha sido eliminada', 'success');
+                    setTimeout(() => {
+                      window.location.href = '/foro';
+                    }, 1200);
+                  } catch (err) {
+                    Swal.fire('Error', 'No se pudo eliminar la publicación', 'error');
+                  }
+                }
+              }}
+            >
+              Eliminar publicación
+            </button>
           )}
         </div>
 

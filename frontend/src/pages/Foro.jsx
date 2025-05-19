@@ -15,27 +15,25 @@ function Foro() {
     api.get('/publicaciones')
       .then(res => setPublicaciones(res.data))
       .catch(err => console.error('Error al obtener publicaciones:', err));
+    // Obtener todas las etiquetas
+    api.get('/etiquetas')
+      .then(res => setEtiquetas(res.data))
+      .catch(err => console.error('Error al obtener etiquetas:', err));
   }, []);
-  // Obtener etiquetas, en proceso de depuración
+
+  // Filtrar publicaciones por título o etiquetas
   const filteredPublicaciones = publicaciones.filter(pub => {
     const matchesTitulo = pub.titulo.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const etiquetaIds = etiquetas
-      .filter(etiqueta => etiqueta.nombre.toLowerCase().includes(searchTerm.toLowerCase()))
-      .map(etiqueta => etiqueta.id);
-
-    const matchesEtiqueta = publicacionEtiquetas
-      .filter(pe => etiquetaIds.includes(pe.etiquetumid))
-      .some(pe => pe.publicacionid === pub.id);
-
-    return matchesTitulo || matchesEtiqueta;
+    // Buscar por etiquetas asociadas (asumiendo que pub.tags existe y es un array de objetos {nombre})
+    const matchesTag = pub.tags && pub.tags.some(tag => tag.nombre.toLowerCase().includes(searchTerm.toLowerCase()));
+    return matchesTitulo || matchesTag;
   });
 
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow bg-gray-100 p-6">
-        <h1 className="text-3xl font-bold text-purple-600 mb-6">Foro</h1>
+        <h1 className="text-3xl font-bold text-purple-600 mb-6 text-center mx-auto max-w-2xl">Foro</h1>
         <div className="mb-4 flex justify-end">
           <button
             onClick={() => navigate('/crear-publicacion')}
@@ -60,6 +58,16 @@ function Foro() {
                 <h3 className="text-lg font-bold">{pub.titulo}</h3>
                 <p className="text-gray-600">{pub.contenido.slice(0, 100)}...</p>
                 <p className="text-sm text-gray-400 mt-2">Autor: {pub.autorNombre}</p>
+                {/* Mostrar etiquetas asociadas */}
+                {pub.tags && pub.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {pub.tags.map((tag) => (
+                      <span key={tag.id} className="bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-xs">
+                        #{tag.nombre}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
               <Link to={`/publicaciones/${pub.id}`} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
                 Ver más

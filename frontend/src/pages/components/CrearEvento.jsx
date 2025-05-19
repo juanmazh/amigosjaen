@@ -100,8 +100,8 @@ function CrearEvento({ onEventoCreado }) {
       titulo,
       descripcion,
       fecha,
-      localizacion,
-      imagenes: imagenLinks.filter((link) => link.trim() !== ""),
+      imagenes: JSON.stringify(imagenLinks.filter((link) => link.trim() !== "")),
+      localizacion: typeof localizacion === 'object' ? `${localizacion.lat},${localizacion.lng}` : localizacion,
     };
 
     try {

@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Usuario = require("./Usuario");
 
 const Evento = sequelize.define("Evento", {
   id: {
@@ -32,9 +31,16 @@ const Evento = sequelize.define("Evento", {
     type: DataTypes.TINYINT, // Cambiado de BOOLEAN a TINYINT
     defaultValue: 1, // Cambiado de true a 1
   },
+  localizacion: {
+    type: DataTypes.STRING, // Puede ser dirección o coordenadas
+    allowNull: true,
+  },
+  usuarioId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
-// Relación con Usuario
-Evento.belongsTo(Usuario, { foreignKey: "usuarioId" });
+// Elimino las relaciones directas para evitar referencias circulares, ahora están en models/index.js
 
 module.exports = Evento;

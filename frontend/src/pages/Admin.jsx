@@ -4,6 +4,9 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import AuthContext from "../context/AuthContext";
 import api from "../api";
+import AdminUsuarios from "./components/AdminUsuarios";
+import AdminPublicaciones from "./components/AdminPublicaciones";
+import AdminEventos from "./components/AdminEventos";
 
 const MySwal = withReactContent(Swal);
 
@@ -11,6 +14,9 @@ function Admin() {
   const { usuario, cargando } = useContext(AuthContext);
   const navigate = useNavigate();
   const [usuarios, setUsuarios] = useState([]);
+  const [publicaciones, setPublicaciones] = useState([]);
+  const [eventos, setEventos] = useState([]);
+  const [asistentesEventos, setAsistentesEventos] = useState({});
 
   useEffect(() => {
     if (cargando) return;
@@ -18,8 +24,25 @@ function Admin() {
       navigate("/login");
     } else {
       cargarUsuarios();
+      cargarPublicaciones();
+      cargarEventos();
     }
   }, [usuario, cargando, navigate]);
+
+  useEffect(() => {
+    if (eventos.length > 0) {
+      eventos.forEach((evento) => {
+        api
+          .get(`/eventos/${evento.id}/asistentes`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          })
+          .then((res) => {
+            setAsistentesEventos((prev) => ({ ...prev, [evento.id]: res.data }));
+          })
+          .catch(() => {});
+      });
+    }
+  }, [eventos]);
 
   const cargarUsuarios = () => {
     api
@@ -31,6 +54,32 @@ function Admin() {
       .then((res) => setUsuarios(res.data))
       .catch(() =>
         Swal.fire("Error", "No se pudieron cargar los usuarios", "error")
+      );
+  };
+
+  const cargarPublicaciones = () => {
+    api
+      .get("/publicaciones", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => setPublicaciones(res.data))
+      .catch(() =>
+        Swal.fire("Error", "No se pudieron cargar las publicaciones", "error")
+      );
+  };
+
+  const cargarEventos = () => {
+    api
+      .get("/eventos", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+      .then((res) => setEventos(res.data))
+      .catch(() =>
+        Swal.fire("Error", "No se pudieron cargar los eventos", "error")
       );
   };
 
@@ -53,6 +102,50 @@ function Admin() {
         Swal.fire("Eliminado", "Usuario eliminado correctamente", "success");
       } catch (error) {
         Swal.fire("Error", "No se pudo eliminar el usuario", "error");
+      }
+    }
+  };
+
+  const eliminarPublicacion = async (id) => {
+    const confirmacion = await Swal.fire({
+      title: "¿Eliminar publicación?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+    if (confirmacion.isConfirmed) {
+      try {
+        await api.delete(`/publicaciones/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setPublicaciones((prev) => prev.filter((p) => p.id !== id));
+        Swal.fire("Eliminado", "Publicación eliminada correctamente", "success");
+      } catch (error) {
+        Swal.fire("Error", "No se pudo eliminar la publicación", "error");
+      }
+    }
+  };
+
+  const eliminarEvento = async (id) => {
+    const confirmacion = await Swal.fire({
+      title: "¿Eliminar evento?",
+      text: "Esta acción no se puede deshacer.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    });
+    if (confirmacion.isConfirmed) {
+      try {
+        await api.delete(`/eventos/${id}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        });
+        setEventos((prev) => prev.filter((e) => e.id !== id));
+        Swal.fire("Eliminado", "Evento eliminado correctamente", "success");
+      } catch (error) {
+        Swal.fire("Error", "No se pudo eliminar el evento", "error");
       }
     }
   };
@@ -127,9 +220,127 @@ function Admin() {
     });
   };
 
+  const abrirFormularioPublicacion = (publicacionInicial = null) => {
+    MySwal.fire({
+      title: publicacionInicial ? "Editar Publicación" : "Nueva Publicación",
+      html: (
+        <div className="flex flex-col space-y-3">
+          <input
+            id="swal-titulo"
+            className="swal2-input"
+            defaultValue={publicacionInicial?.titulo || ""}
+            placeholder="Título"
+          />
+          <textarea
+            id="swal-contenido"
+            className="swal2-textarea"
+            defaultValue={publicacionInicial?.contenido || ""}
+            placeholder="Contenido"
+          />
+        </div>
+      ),
+      showCancelButton: true,
+      confirmButtonText: publicacionInicial ? "Actualizar" : "Crear",
+      preConfirm: () => {
+        const titulo = document.getElementById("swal-titulo").value;
+        const contenido = document.getElementById("swal-contenido").value;
+        if (!titulo || !contenido) {
+          Swal.showValidationMessage("Todos los campos son obligatorios");
+        }
+        return { titulo, contenido };
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed && result.value) {
+        const datos = result.value;
+        try {
+          if (publicacionInicial) {
+            const res = await api.put(`/publicaciones/${publicacionInicial.id}`, datos, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            setPublicaciones((prev) =>
+              prev.map((p) => (p.id === publicacionInicial.id ? res.data.publicacion : p))
+            );
+            Swal.fire("Actualizado", "Publicación actualizada correctamente", "success");
+          } else {
+            const res = await api.post(`/publicaciones`, datos, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            setPublicaciones((prev) => [...prev, res.data.publicacion]);
+            Swal.fire("Creado", "Publicación creada correctamente", "success");
+          }
+        } catch (error) {
+          Swal.fire("Error", "No se pudo guardar la publicación", "error");
+        }
+      }
+    });
+  };
+
+  const abrirFormularioEvento = (eventoInicial = null) => {
+    MySwal.fire({
+      title: eventoInicial ? "Editar Evento" : "Nuevo Evento",
+      html: (
+        <div className="flex flex-col space-y-3">
+          <input
+            id="swal-titulo-evento"
+            className="swal2-input"
+            defaultValue={eventoInicial?.titulo || ""}
+            placeholder="Título"
+          />
+          <textarea
+            id="swal-descripcion-evento"
+            className="swal2-textarea"
+            defaultValue={eventoInicial?.descripcion || ""}
+            placeholder="Descripción"
+          />
+          <input
+            id="swal-fecha-evento"
+            className="swal2-input"
+            type="date"
+            defaultValue={eventoInicial?.fecha ? eventoInicial.fecha.slice(0,10) : ""}
+            placeholder="Fecha"
+          />
+        </div>
+      ),
+      showCancelButton: true,
+      confirmButtonText: eventoInicial ? "Actualizar" : "Crear",
+      preConfirm: () => {
+        const titulo = document.getElementById("swal-titulo-evento").value;
+        const descripcion = document.getElementById("swal-descripcion-evento").value;
+        const fecha = document.getElementById("swal-fecha-evento").value;
+        if (!titulo || !descripcion || !fecha) {
+          Swal.showValidationMessage("Todos los campos son obligatorios");
+        }
+        return { titulo, descripcion, fecha };
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed && result.value) {
+        const datos = result.value;
+        try {
+          if (eventoInicial) {
+            const res = await api.put(`/eventos/${eventoInicial.id}`, datos, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            setEventos((prev) =>
+              prev.map((e) => (e.id === eventoInicial.id ? res.data.evento : e))
+            );
+            Swal.fire("Actualizado", "Evento actualizado correctamente", "success");
+          } else {
+            const res = await api.post(`/eventos`, datos, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            });
+            setEventos((prev) => [...prev, res.data.evento]);
+            Swal.fire("Creado", "Evento creado correctamente", "success");
+          }
+        } catch (error) {
+          Swal.fire("Error", "No se pudo guardar el evento", "error");
+        }
+      }
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-6">
-      <div className="bg-white shadow rounded-lg p-6 mb-6 flex justify-between items-center">
+      <div className="bg-white shadow-lg rounded-xl p-6 mb-6 flex justify-between items-center">
         <h2 className="text-2xl font-bold text-gray-800">Gestión de Usuarios</h2>
         <div className="space-x-4">
           <button
@@ -146,42 +357,23 @@ function Admin() {
           </button>
         </div>
       </div>
-
-      <div className="bg-white shadow rounded-lg p-6">
-        <table className="w-full table-auto border-collapse">
-          <thead>
-            <tr className="bg-gray-200 text-gray-700">
-              <th className="px-4 py-2 border">Nombre</th>
-              <th className="px-4 py-2 border">Email</th>
-              <th className="px-4 py-2 border">Rol</th>
-              <th className="px-4 py-2 border">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {usuarios.map((u) => (
-              <tr key={u.id} className="text-gray-700 hover:bg-gray-100">
-                <td className="px-4 py-2 border">{u.nombre}</td>
-                <td className="px-4 py-2 border">{u.email}</td>
-                <td className="px-4 py-2 border">{u.rol}</td>
-                <td className="px-4 py-2 border text-center">
-                  <button
-                    onClick={() => abrirFormularioUsuario(u)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm mr-2"
-                  >
-                    Editar
-                  </button>
-                  <button
-                    onClick={() => eliminarUsuario(u.id)}
-                    className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
-                  >
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <AdminUsuarios
+        usuarios={usuarios}
+        abrirFormularioUsuario={abrirFormularioUsuario}
+        eliminarUsuario={eliminarUsuario}
+      />
+      <AdminPublicaciones
+        publicaciones={publicaciones}
+        abrirFormularioPublicacion={abrirFormularioPublicacion}
+        eliminarPublicacion={eliminarPublicacion}
+      />
+      <AdminEventos
+        eventos={eventos}
+        asistentesEventos={asistentesEventos}
+        abrirFormularioEvento={abrirFormularioEvento}
+        eliminarEvento={eliminarEvento}
+        MySwal={MySwal}
+      />
     </div>
   );
 }
