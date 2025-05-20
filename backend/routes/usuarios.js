@@ -1,11 +1,11 @@
 const express = require('express');
-const bcrypt = require('bcrypt'); // Asegúrate de importar bcrypt
+const bcrypt = require('bcryptjs'); // Usar bcryptjs en vez de bcrypt
 const router = express.Router();
 const Usuario = require('../models/Usuario');
 const verificarToken = require('../middleware/verificarToken');
 const soloAdmin = require('../middleware/soloAdmin');
 
-// ✅ Obtener todos los usuarios (solo admin)
+// Obtener todos los usuarios (solo admin)
 router.get('/', verificarToken, soloAdmin, async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({
@@ -18,7 +18,7 @@ router.get('/', verificarToken, soloAdmin, async (req, res) => {
   }
 });
 
-// ✅ Eliminar un usuario (solo admin)
+// Eliminar un usuario (solo admin)
 router.delete('/:id', verificarToken, soloAdmin, async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.params.id);
@@ -32,7 +32,7 @@ router.delete('/:id', verificarToken, soloAdmin, async (req, res) => {
   }
 });
 
-// ✅ Actualizar un usuario (solo admin)
+// Actualizar un usuario (solo admin)
 router.put('/:id', verificarToken, soloAdmin, async (req, res) => {
   const { nombre, email, rol } = req.body;
   try {
@@ -51,7 +51,7 @@ router.put('/:id', verificarToken, soloAdmin, async (req, res) => {
   }
 });
 
-// ✅ Crear un nuevo usuario (solo admin)
+// Crear un nuevo usuario (solo admin)
 router.post('/', verificarToken, soloAdmin, async (req, res) => {
   const { nombre, email, password, rol } = req.body;
 

@@ -1,7 +1,6 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Usuario = require('./Usuario');
-const Etiqueta = require('./Etiqueta');
 
 const Publicacion = sequelize.define('Publicacion', {
   titulo: { type: DataTypes.STRING, allowNull: false },
@@ -12,8 +11,6 @@ const Publicacion = sequelize.define('Publicacion', {
 
 Usuario.hasMany(Publicacion);
 Publicacion.belongsTo(Usuario);
-
-Publicacion.belongsToMany(Etiqueta, { through: 'PublicacionEtiquetas', as: 'tags' });
-Etiqueta.belongsToMany(Publicacion, { through: 'PublicacionEtiquetas', as: 'publicaciones' });
+// Las relaciones belongsToMany se definen solo en models/index.js
 
 module.exports = Publicacion;

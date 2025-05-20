@@ -7,11 +7,13 @@ import UserMenu from './components/UserMenu';
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Swal from "sweetalert2";
+import Comentarios from "./components/Comentarios";
 
 function PublicacionDetalle() {
   const { id } = useParams();
   const [publicacion, setPublicacion] = useState(null);
   const { usuario } = useContext(AuthContext);
+  const [refrescarComentarios, setRefrescarComentarios] = useState(false);
 
   useEffect(() => {
     api.get(`/publicaciones/${id}`)
@@ -24,9 +26,9 @@ function PublicacionDetalle() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-purple-200">
       <Header />
-      <main className="flex-grow p-4 max-w-4xl mx-auto">
+      <main className="flex-grow p-6 max-w-4xl mx-auto">
         <div className="bg-white shadow-md rounded-lg p-6 mb-6">
           <h2 className="text-3xl font-bold mb-4">{publicacion.titulo}</h2>
           <p className="text-gray-600 mb-4">{publicacion.contenido}</p>
@@ -75,11 +77,55 @@ function PublicacionDetalle() {
               Eliminar publicación
             </button>
           )}
+
+          {/* Botón de editar si el usuario es el autor */}
+          {usuario && usuario.nombre === publicacion.autorNombre && (
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4 mr-2"
+              onClick={async () => {
+                const { value: formValues } = await Swal.fire({
+                  title: 'Editar publicación',
+                  html:
+                    `<label for='swal-titulo' style='display:block;text-align:left;font-weight:600;margin-bottom:2px;'>Título</label>` +
+                    `<input id="swal-titulo" class="swal2-input" placeholder="Título" value="${publicacion.titulo.replace(/"/g, '&quot;')}" />` +
+                    `<label for='swal-contenido' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Descripción</label>` +
+                    `<textarea id="swal-contenido" class="swal2-textarea" placeholder="Contenido">${publicacion.contenido.replace(/</g, '&lt;')}</textarea>`,
+                  focusConfirm: false,
+                  showCancelButton: true,
+                  preConfirm: () => {
+                    const titulo = document.getElementById('swal-titulo').value;
+                    const contenido = document.getElementById('swal-contenido').value;
+                    if (!titulo || !contenido) {
+                      Swal.showValidationMessage('Todos los campos son obligatorios');
+                      return false;
+                    }
+                    return { titulo, contenido };
+                  }
+                });
+                if (formValues) {
+                  try {
+                    const res = await api.put(`/publicaciones/${publicacion.id}`, {
+                      titulo: formValues.titulo,
+                      contenido: formValues.contenido
+                    }, {
+                      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                    });
+                    setPublicacion({ ...publicacion, ...res.data });
+                    Swal.fire('Actualizada', 'La publicación ha sido actualizada', 'success');
+                  } catch (err) {
+                    Swal.fire('Error', 'No se pudo actualizar la publicación', 'error');
+                  }
+                }
+              }}
+            >
+              Editar publicación
+            </button>
+          )}
         </div>
 
-        <div className="bg-gray-100 shadow-inner rounded-lg p-4">
+        <div className="bg-white/80 shadow-inner rounded-lg p-4">
           <h3 className="text-xl font-semibold mb-2">Comentarios</h3>
-          <p className="text-gray-500">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
+          <Comentarios publicacionId={publicacion.id} onNuevoComentario={() => setRefrescarComentarios(!refrescarComentarios)} />
         </div>
       </main>
       <Footer />

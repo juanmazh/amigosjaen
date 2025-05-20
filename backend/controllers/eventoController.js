@@ -1,11 +1,12 @@
-const Evento = require("../models/Evento");
+const { Evento, Etiqueta } = require("../models");
 const AsistentesEventos = require("../models/AsistentesEventos");
 const { Op } = require("sequelize");
 
 // Crear un nuevo evento
 const crearEvento = async (req, res) => {
+  const t = await Evento.sequelize.transaction();
   try {
-    const { titulo, descripcion, fecha, imagenes, localizacion } = req.body;
+    const { titulo, descripcion, fecha, imagenes, localizacion, etiquetas = [] } = req.body;
     const usuarioId = req.usuario.id; // Obtenemos el usuario autenticado
 
     const nuevoEvento = await Evento.create({
@@ -15,22 +16,47 @@ const crearEvento = async (req, res) => {
       imagenes,
       localizacion, // Guardar localización
       usuarioId,
+    }, { transaction: t });
+
+    // Asociar etiquetas si vienen en el body
+    if (Array.isArray(etiquetas) && etiquetas.length > 0) {
+      const etiquetasFiltradas = etiquetas
+        .map(e => (typeof e === 'string' ? e.trim() : ''))
+        .filter(e => e.length > 0);
+      if (etiquetasFiltradas.length > 0) {
+        const etiquetasCreadas = await Promise.all(
+          etiquetasFiltradas.map(async (nombre) => {
+            const [etiqueta, created] = await Etiqueta.findOrCreate({ where: { nombre }, transaction: t });
+            console.log('Etiqueta:', etiqueta.nombre, 'ID:', etiqueta.id, 'Creada:', created);
+            return etiqueta;
+          })
+        );
+        console.log('Etiquetas a asociar (IDs):', etiquetasCreadas.map(e => e.id));
+        await nuevoEvento.addEventosTags(etiquetasCreadas, { transaction: t });
+      }
+    }
+
+    await t.commit();
+
+    // Devolver el evento con las etiquetas asociadas
+    const eventoConEtiquetas = await Evento.findByPk(nuevoEvento.id, {
+      include: [{ model: Etiqueta, as: "eventosTags" }],
     });
 
-    res.status(201).json(nuevoEvento);
+    res.status(201).json(eventoConEtiquetas);
   } catch (error) {
+    await t.rollback();
     console.error(error);
     res.status(500).json({ error: "Error al crear el evento" });
   }
 };
 
-// Listar eventos
+// Listar eventos (con etiquetas)
 const listarEventos = async (req, res) => {
   try {
     const eventos = await Evento.findAll({
-      where: {
-        activo: true,
-      },
+      where: { activo: true },
+      include: [{ model: Etiqueta, as: "eventosTags" }],
       order: [["fecha", "ASC"]],
     });
 
@@ -63,10 +89,13 @@ const actualizarEstadoEventos = async (req, res) => {
   }
 };
 
+// Obtener detalles de un evento específico (con etiquetas)
 const listarEventoPorId = async (req, res) => {
   try {
     const { id } = req.params;
-    const evento = await Evento.findByPk(id);
+    const evento = await Evento.findByPk(id, {
+      include: [{ model: Etiqueta, as: "eventosTags" }],
+    });
 
     if (!evento) {
       return res.status(404).json({ error: "Evento no encontrado" });

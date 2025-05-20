@@ -24,7 +24,7 @@ function CrearPublicacionPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-purple-200">
       <header className="bg-white shadow p-4 flex justify-between items-center">
         <h1 className="text-2xl font-bold text-purple-600">
           Crear Publicación

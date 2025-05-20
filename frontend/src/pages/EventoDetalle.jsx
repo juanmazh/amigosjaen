@@ -50,7 +50,7 @@ function EventoDetalle() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-purple-200">
       <Header />
       <main className="flex-grow flex justify-center items-center">
         <div className="bg-white shadow-lg rounded-2xl p-8 max-w-4xl w-full">
@@ -83,6 +83,19 @@ function EventoDetalle() {
             {/* Detalles del evento */}
             <div className="md:w-1/2 w-full flex flex-col gap-2">
               <h1 className="text-3xl font-bold text-purple-700 mb-2">{evento.titulo}</h1>
+              {/* Etiquetas asociadas al evento */}
+              {evento.eventosTags && evento.eventosTags.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {evento.eventosTags.map((tag) => (
+                    <span
+                      key={tag.id}
+                      className="bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-xs"
+                    >
+                      #{tag.nombre}
+                    </span>
+                  ))}
+                </div>
+              )}
               <p className="text-gray-700 mb-2 whitespace-pre-line">{evento.descripcion}</p>
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-semibold text-gray-600">Fecha:</span>

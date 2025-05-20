@@ -13,7 +13,7 @@ module.exports = {
       PublicacionId: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'Publicacions', // Nombre de la tabla de publicaciones
+          model: 'Publicaciones', // Corregido: nombre correcto de la tabla
           key: 'id'
         },
         onUpdate: 'CASCADE',

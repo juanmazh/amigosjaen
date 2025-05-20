@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import api from "../../api";
 import Swal from "sweetalert2";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 // Configuración del icono de marcador
 const customIcon = new L.Icon({
@@ -29,6 +30,10 @@ function CrearEvento({ onEventoCreado }) {
   const [imagenes, setImagenes] = useState([]);
   const [imagenLinks, setImagenLinks] = useState([""]);
   const [localizacion, setLocalizacion] = useState({ lat: 37.7796, lng: -3.7849 }); // Coordenadas iniciales válidas
+  const [etiquetas, setEtiquetas] = useState([]);
+  const [etiquetaActual, setEtiquetaActual] = useState("");
+  const [etiquetasExistentes, setEtiquetasExistentes] = useState([]);
+  const navigate = useNavigate();
 
   const isValidLatLng = (latlng) => {
     return latlng && typeof latlng.lat === "number" && typeof latlng.lng === "number";
@@ -85,6 +90,20 @@ function CrearEvento({ onEventoCreado }) {
     }
   };
 
+  const handleEtiquetaKeyDown = (e) => {
+    if ((e.key === "Enter" || e.key === ",") && etiquetaActual.trim() !== "") {
+      e.preventDefault();
+      if (!etiquetas.includes(etiquetaActual.trim())) {
+        setEtiquetas([...etiquetas, etiquetaActual.trim()]);
+      }
+      setEtiquetaActual("");
+    }
+  };
+
+  const handleEliminarEtiqueta = (index) => {
+    setEtiquetas(etiquetas.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -102,6 +121,7 @@ function CrearEvento({ onEventoCreado }) {
       fecha,
       imagenes: JSON.stringify(imagenLinks.filter((link) => link.trim() !== "")),
       localizacion: typeof localizacion === 'object' ? `${localizacion.lat},${localizacion.lng}` : localizacion,
+      etiquetas,
     };
 
     try {
@@ -112,12 +132,29 @@ function CrearEvento({ onEventoCreado }) {
       setDescripcion("");
       setFecha("");
       setImagenLinks([""]);
+      setEtiquetas([]);
       if (onEventoCreado) onEventoCreado(res.data);
+      setTimeout(() => {
+        navigate("/eventos");
+      }, 1200);
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "No se pudo crear el evento", "error");
     }
   };
+
+  useEffect(() => {
+    // Cargar etiquetas existentes desde el backend
+    const cargarEtiquetas = async () => {
+      try {
+        const res = await api.get("/etiquetas");
+        setEtiquetasExistentes(res.data.map((etiqueta) => etiqueta.nombre));
+      } catch (err) {
+        console.error("Error al cargar etiquetas:", err);
+      }
+    };
+    cargarEtiquetas();
+  }, []);
 
   return (
     <div className="mb-6 bg-white shadow p-4 rounded-xl">
@@ -196,6 +233,40 @@ function CrearEvento({ onEventoCreado }) {
         >
           Añadir otra imagen
         </button>
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">Etiquetas</label>
+          <div className="flex flex-wrap gap-2 mb-2">
+            {etiquetas.map((etiqueta, index) => (
+              <span
+                key={index}
+                className="bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-sm flex items-center gap-2"
+              >
+                {etiqueta}
+                <button
+                  type="button"
+                  className="text-red-500 hover:text-red-700"
+                  onClick={() => handleEliminarEtiqueta(index)}
+                >
+                  &times;
+                </button>
+              </span>
+            ))}
+          </div>
+          <input
+            type="text"
+            placeholder="Añade una etiqueta y pulsa Enter"
+            className="w-full border border-gray-300 rounded px-3 py-2"
+            value={etiquetaActual}
+            onChange={e => setEtiquetaActual(e.target.value)}
+            onKeyDown={handleEtiquetaKeyDown}
+            list="etiquetas-sugeridas"
+          />
+          <datalist id="etiquetas-sugeridas">
+            {etiquetasExistentes.map((et, i) => (
+              <option key={i} value={et} />
+            ))}
+          </datalist>
+        </div>
         <button
           type="submit"
           className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"

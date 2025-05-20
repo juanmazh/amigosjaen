@@ -4,7 +4,7 @@ import Footer from "./components/Footer";
 
 function CrearEventoPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-purple-200">
       <Header />
       <div className="flex-grow p-4">
         <CrearEvento />

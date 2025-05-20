@@ -4,7 +4,7 @@
 module.exports = {
   async up (queryInterface, Sequelize) {
     // Eliminar la clave foránea que apunta a la tabla `publicacions`
-    await queryInterface.removeConstraint('PublicacionEtiquetas', 'PublicacionEtiquetas_ibfk_1');
+    // await queryInterface.removeConstraint('PublicacionEtiquetas', 'PublicacionEtiquetas_ibfk_1');
   },
 
   async down (queryInterface, Sequelize) {

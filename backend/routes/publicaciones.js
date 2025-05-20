@@ -167,4 +167,27 @@ router.delete('/:id', verificarToken, async (req, res) => {
   }
 });
 
+// Actualizar una publicación (solo el dueño puede)
+router.put('/:id', verificarToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { titulo, contenido } = req.body;
+    const publicacion = await Publicacion.findByPk(id);
+    if (!publicacion) {
+      return res.status(404).json({ msg: 'Publicación no encontrada' });
+    }
+    // Solo el dueño puede editar
+    if (publicacion.UsuarioId !== req.usuario.id) {
+      return res.status(403).json({ msg: 'No tienes permiso para editar esta publicación' });
+    }
+    publicacion.titulo = titulo;
+    publicacion.contenido = contenido;
+    await publicacion.save();
+    res.json({ id: publicacion.id, titulo: publicacion.titulo, contenido: publicacion.contenido });
+  } catch (err) {
+    console.error('Error al actualizar publicación:', err);
+    res.status(500).json({ msg: 'Error al actualizar publicación' });
+  }
+});
+
 module.exports = router;

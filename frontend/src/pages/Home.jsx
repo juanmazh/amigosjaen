@@ -31,10 +31,16 @@ function Home() {
       <Header />
       {/* Contenido principal */}
       <main className="p-4 max-w-4xl mx-auto">
+        <h1 className="text-5xl font-extrabold text-purple-700 text-center mb-2 drop-shadow-lg tracking-tight">
+          AmigosJaén
+        </h1>
+        <p className="text-lg text-purple-900 text-center mb-8 max-w-2xl mx-auto">
+          La comunidad digital para conectar, compartir y descubrir eventos y foros en Jaén. ¡Haz nuevos amigos y participa!
+        </p>
         <h2 className="text-xl font-semibold mb-4">
           Bienvenido, {usuario ? usuario.nombre : 'Invitado'}
         </h2>
-        <p className="mb-4">Aquí puedes ver las últimas publicaciones de la comunidad.</p>
+        <p className="mb-4">Aquí puedes ver las últimas novedades de la comunidad de AmigosJaén.</p>
 
         {usuario && mostrarFormulario && (
           <div className="mb-4">
@@ -51,9 +57,9 @@ function Home() {
           </button>
         </div>
 
-        <h2 className="text-xl font-semibold mb-4">Últimos eventos</h2>
+        <h2 className="text-xl font-semibold mb-5">Últimos eventos</h2>
         <EventosHome />
-        <h2 className="text-xl font-semibold mb-4">Últimas publicaciones</h2>
+        <h2 className="text-xl font-semibold mb-5">Últimas publicaciones</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {publicaciones.map(pub => (
             <Link to={`/publicaciones/${pub.id}`} key={pub.id} className="bg-white shadow-md rounded-xl p-4">

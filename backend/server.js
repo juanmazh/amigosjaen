@@ -9,6 +9,7 @@ const usuariosRoutes = require('./routes/usuarios');
 const publicacionesRoutes = require('./routes/publicaciones');
 const etiquetasRoutes = require('./routes/etiquetas');
 const eventosRoutes = require('./routes/eventos');
+const comentariosRouter = require('./routes/comentarios'); // Asegúrate de que la ruta sea correcta
 
 const app = express();
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use('/api/publicaciones', publicacionesRoutes);
 app.use('/api/auth', authRoutes); // Autenticación (login, registro, etc.)
 app.use('/api/etiquetas', etiquetasRoutes);
 app.use('/api/eventos', eventosRoutes);
+app.use('/api/comentarios', comentariosRouter); // Nueva ruta para comentarios
 
 // Sincronizar base de datos
 sequelize.sync({ force: false }).then(async () => {

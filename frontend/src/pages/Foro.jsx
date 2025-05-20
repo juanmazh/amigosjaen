@@ -3,6 +3,7 @@ import api from '../api';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import { FaEye } from "react-icons/fa";
 
 function Foro() {
   const [publicaciones, setPublicaciones] = useState([]);
@@ -30,14 +31,14 @@ function Foro() {
   });
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-purple-200">
       <Header />
-      <main className="flex-grow bg-gray-100 p-6">
-        <h1 className="text-3xl font-bold text-purple-600 mb-6 text-center mx-auto max-w-2xl">Foro</h1>
-        <div className="mb-4 flex justify-end">
+      <main className="flex-grow p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-3xl font-bold text-purple-600 text-center mx-auto max-w-2xl">Foro</h1>
           <button
             onClick={() => navigate('/crear-publicacion')}
-            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-green-500 text-white px-4 py-2 text-base font-medium hover:bg-green-600"
+            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-green-500 text-white px-4 py-2 text-base font-medium hover:bg-green-600 ml-4"
           >
             Crea una publicación
           </button>
@@ -48,7 +49,7 @@ function Foro() {
             placeholder="Buscar por título o etiqueta..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
+            className="w-full p-2 border border-gray-300 rounded-lg bg-white"
           />
         </div>
         <div className="space-y-4">
@@ -69,8 +70,8 @@ function Foro() {
                   </div>
                 )}
               </div>
-              <Link to={`/publicaciones/${pub.id}`} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700">
-                Ver más
+              <Link to={`/publicaciones/${pub.id}`} className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center gap-2" title="Ver detalles">
+                <FaEye />
               </Link>
             </div>
           ))}
