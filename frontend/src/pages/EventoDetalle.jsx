@@ -275,7 +275,7 @@ function EventoDetalle() {
                         `<label for='swal-fecha' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Fecha</label>` +
                         `<input id="swal-fecha" class="swal2-input" type="date" value="${evento.fecha ? evento.fecha.slice(0,10) : ''}" />` +
                         `<label for='swal-localizacion' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Localización (dirección o lat,lng)</label>` +
-                        `<input id="swal-localizacion" class="swal2-input" placeholder="Localización" value="${evento.localizacion || ''}" />` +
+                        `<input id="swal-localizacion" class="swal2-input" placeholder="Calle ejemplo, ciudad" value="${evento.localizacion || ''}" />` +
                         `<label for='swal-etiquetas' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Etiquetas (separadas por coma)</label>` +
                         `<input id="swal-etiquetas" class="swal2-input" placeholder="etiqueta1,etiqueta2" value="${evento.eventosTags ? evento.eventosTags.map(t=>t.nombre).join(',') : ''}" />`,
                       focusConfirm: false,
