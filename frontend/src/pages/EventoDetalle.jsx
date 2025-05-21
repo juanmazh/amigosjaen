@@ -274,7 +274,7 @@ function EventoDetalle() {
                         `<textarea id="swal-descripcion" class="swal2-textarea" placeholder="Descripción">${evento.descripcion.replace(/</g, '&lt;')}</textarea>` +
                         `<label for='swal-fecha' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Fecha</label>` +
                         `<input id="swal-fecha" class="swal2-input" type="date" value="${evento.fecha ? evento.fecha.slice(0,10) : ''}" />` +
-                        `<label for='swal-localizacion' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Localización (lat,lng o texto)</label>` +
+                        `<label for='swal-localizacion' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Localización (dirección o lat,lng)</label>` +
                         `<input id="swal-localizacion" class="swal2-input" placeholder="Localización" value="${evento.localizacion || ''}" />` +
                         `<label for='swal-etiquetas' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Etiquetas (separadas por coma)</label>` +
                         `<input id="swal-etiquetas" class="swal2-input" placeholder="etiqueta1,etiqueta2" value="${evento.eventosTags ? evento.eventosTags.map(t=>t.nombre).join(',') : ''}" />`,
@@ -294,9 +294,24 @@ function EventoDetalle() {
                       }
                     });
                     if (formValues) {
+                      let localizacionFinal = formValues.localizacion;
+                      // Si no es coordenada, geocodifica
+                      if (localizacionFinal && !/^[-+]?\d+(\.\d+)?\s*,\s*[-+]?\d+(\.\d+)?$/.test(localizacionFinal)) {
+                        try {
+                          const resGeo = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(localizacionFinal)}`);
+                          const dataGeo = await resGeo.json();
+                          if (dataGeo.length > 0) {
+                            localizacionFinal = `${dataGeo[0].lat},${dataGeo[0].lon}`;
+                          } else {
+                            await Swal.fire('Error', 'No se pudo encontrar la dirección. Se guardará el texto tal cual.', 'warning');
+                          }
+                        } catch (e) {
+                          await Swal.fire('Error', 'No se pudo geocodificar la dirección. Se guardará el texto tal cual.', 'warning');
+                        }
+                      }
                       try {
                         const res = await api.put(`/eventos/${evento.id}`,
-                          formValues,
+                          { ...formValues, localizacion: localizacionFinal },
                           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
                         );
                         setEvento(res.data);
