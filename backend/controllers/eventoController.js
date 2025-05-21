@@ -108,7 +108,7 @@ const listarEventoPorId = async (req, res) => {
   }
 };
 
-// Eliminar un evento (solo el dueño puede)
+// Eliminar un evento (dueño o admin)
 const eliminarEvento = async (req, res) => {
   try {
     const { id } = req.params;
@@ -116,8 +116,8 @@ const eliminarEvento = async (req, res) => {
     if (!evento) {
       return res.status(404).json({ error: "Evento no encontrado" });
     }
-    // Solo el dueño puede borrar
-    if (evento.usuarioId !== req.usuario.id) {
+    // Permitir si es el dueño o admin
+    if (evento.usuarioId !== req.usuario.id && req.usuario.rol !== 'admin') {
       return res.status(403).json({ error: "No tienes permiso para borrar este evento" });
     }
     await evento.destroy();
@@ -185,6 +185,46 @@ const eliminarAsistente = async (req, res) => {
   }
 };
 
+// Actualizar un evento (dueño o admin)
+const updateEvento = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { titulo, descripcion, fecha, imagenes, localizacion, activo, etiquetas = [] } = req.body;
+    const evento = await Evento.findByPk(id, { include: [{ model: Etiqueta, as: "eventosTags" }] });
+    if (!evento) {
+      return res.status(404).json({ error: "Evento no encontrado" });
+    }
+    // Permitir si es el dueño o admin
+    if (evento.usuarioId !== req.usuario.id && req.usuario.rol !== 'admin') {
+      return res.status(403).json({ error: "No tienes permiso para editar este evento" });
+    }
+    // Actualizar campos
+    if (titulo !== undefined) evento.titulo = titulo;
+    if (descripcion !== undefined) evento.descripcion = descripcion;
+    if (fecha !== undefined) evento.fecha = fecha;
+    if (imagenes !== undefined) evento.imagenes = imagenes;
+    if (localizacion !== undefined) evento.localizacion = localizacion;
+    if (activo !== undefined) evento.activo = activo;
+    await evento.save();
+    // Actualizar etiquetas si se proporcionan
+    if (Array.isArray(etiquetas)) {
+      const etiquetasCreadas = await Promise.all(
+        etiquetas.map(async (nombre) => {
+          const [etiqueta] = await Etiqueta.findOrCreate({ where: { nombre } });
+          return etiqueta;
+        })
+      );
+      await evento.setEventosTags(etiquetasCreadas);
+    }
+    // Devolver el evento actualizado con etiquetas
+    const eventoActualizado = await Evento.findByPk(id, { include: [{ model: Etiqueta, as: "eventosTags" }] });
+    res.status(200).json(eventoActualizado);
+  } catch (error) {
+    console.error("Error al actualizar el evento:", error);
+    res.status(500).json({ error: "Error al actualizar el evento" });
+  }
+};
+
 module.exports = {
   crearEvento,
   listarEventos,
@@ -194,4 +234,5 @@ module.exports = {
   inscribirAsistente,
   obtenerAsistentes,
   eliminarAsistente,
+  updateEvento,
 };

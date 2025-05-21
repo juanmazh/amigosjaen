@@ -147,7 +147,7 @@ router.get('/etiquetas', async (req, res) => {
   }
 });
 
-// Eliminar una publicación (solo el dueño puede)
+// Eliminar una publicación (dueño o admin)
 router.delete('/:id', verificarToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -155,8 +155,8 @@ router.delete('/:id', verificarToken, async (req, res) => {
     if (!publicacion) {
       return res.status(404).json({ msg: 'Publicación no encontrada' });
     }
-    // Solo el dueño puede borrar
-    if (publicacion.UsuarioId !== req.usuario.id) {
+    // Permitir si es el dueño o admin
+    if (publicacion.UsuarioId !== req.usuario.id && req.usuario.rol !== 'admin') {
       return res.status(403).json({ msg: 'No tienes permiso para borrar esta publicación' });
     }
     await publicacion.destroy();
@@ -167,7 +167,7 @@ router.delete('/:id', verificarToken, async (req, res) => {
   }
 });
 
-// Actualizar una publicación (solo el dueño puede)
+// Actualizar una publicación (dueño o admin)
 router.put('/:id', verificarToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -176,8 +176,8 @@ router.put('/:id', verificarToken, async (req, res) => {
     if (!publicacion) {
       return res.status(404).json({ msg: 'Publicación no encontrada' });
     }
-    // Solo el dueño puede editar
-    if (publicacion.UsuarioId !== req.usuario.id) {
+    // Permitir si es el dueño o admin
+    if (publicacion.UsuarioId !== req.usuario.id && req.usuario.rol !== 'admin') {
       return res.status(403).json({ msg: 'No tienes permiso para editar esta publicación' });
     }
     publicacion.titulo = titulo;
