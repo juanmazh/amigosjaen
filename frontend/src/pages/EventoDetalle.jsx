@@ -260,6 +260,56 @@ function EventoDetalle() {
                   Eliminar evento
                 </button>
               )}
+              {/* Botón de editar evento para el creador o admin */}
+              {usuario && (usuario.id === evento.usuarioId || usuario.rol === 'admin') && (
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4 mr-2"
+                  onClick={async () => {
+                    const { value: formValues } = await Swal.fire({
+                      title: 'Editar evento',
+                      html:
+                        `<label for='swal-titulo' style='display:block;text-align:left;font-weight:600;margin-bottom:2px;'>Título</label>` +
+                        `<input id="swal-titulo" class="swal2-input" placeholder="Título" value="${evento.titulo.replace(/"/g, '&quot;')}" />` +
+                        `<label for='swal-descripcion' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Descripción</label>` +
+                        `<textarea id="swal-descripcion" class="swal2-textarea" placeholder="Descripción">${evento.descripcion.replace(/</g, '&lt;')}</textarea>` +
+                        `<label for='swal-fecha' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Fecha</label>` +
+                        `<input id="swal-fecha" class="swal2-input" type="date" value="${evento.fecha ? evento.fecha.slice(0,10) : ''}" />` +
+                        `<label for='swal-localizacion' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Localización (lat,lng o texto)</label>` +
+                        `<input id="swal-localizacion" class="swal2-input" placeholder="Localización" value="${evento.localizacion || ''}" />` +
+                        `<label for='swal-etiquetas' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Etiquetas (separadas por coma)</label>` +
+                        `<input id="swal-etiquetas" class="swal2-input" placeholder="etiqueta1,etiqueta2" value="${evento.eventosTags ? evento.eventosTags.map(t=>t.nombre).join(',') : ''}" />`,
+                      focusConfirm: false,
+                      showCancelButton: true,
+                      preConfirm: () => {
+                        const titulo = document.getElementById('swal-titulo').value;
+                        const descripcion = document.getElementById('swal-descripcion').value;
+                        const fecha = document.getElementById('swal-fecha').value;
+                        const localizacion = document.getElementById('swal-localizacion').value;
+                        const etiquetas = document.getElementById('swal-etiquetas').value.split(',').map(e=>e.trim()).filter(Boolean);
+                        if (!titulo || !descripcion || !fecha) {
+                          Swal.showValidationMessage('Título, descripción y fecha son obligatorios');
+                          return false;
+                        }
+                        return { titulo, descripcion, fecha, localizacion, etiquetas };
+                      }
+                    });
+                    if (formValues) {
+                      try {
+                        const res = await api.put(`/eventos/${evento.id}`,
+                          formValues,
+                          { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
+                        );
+                        setEvento(res.data);
+                        Swal.fire('Actualizado', 'El evento ha sido actualizado', 'success');
+                      } catch (err) {
+                        Swal.fire('Error', 'No se pudo actualizar el evento', 'error');
+                      }
+                    }
+                  }}
+                >
+                  Editar evento
+                </button>
+              )}
             </div>
           </div>
         </div>

@@ -51,7 +51,7 @@ function Admin() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((res) => setUsuarios(res.data))
+      .then((res) => setUsuarios(res.data.usuario ? res.data.usuario : res.data))
       .catch(() =>
         Swal.fire("Error", "No se pudieron cargar los usuarios", "error")
       );
@@ -64,7 +64,7 @@ function Admin() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((res) => setPublicaciones(res.data))
+      .then((res) => setPublicaciones(res.data.publicacion ? res.data.publicacion : res.data))
       .catch(() =>
         Swal.fire("Error", "No se pudieron cargar las publicaciones", "error")
       );
@@ -77,7 +77,7 @@ function Admin() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((res) => setEventos(res.data))
+      .then((res) => setEventos(res.data.evento ? res.data.evento : res.data))
       .catch(() =>
         Swal.fire("Error", "No se pudieron cargar los eventos", "error")
       );
@@ -257,15 +257,17 @@ function Admin() {
             const res = await api.put(`/publicaciones/${publicacionInicial.id}`, datos, {
               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
+            const nuevaPublicacion = res.data.publicacion || res.data;
             setPublicaciones((prev) =>
-              prev.map((p) => (p.id === publicacionInicial.id ? res.data.publicacion : p))
+              prev.map((p) => (p.id === publicacionInicial.id ? nuevaPublicacion : p))
             );
             Swal.fire("Actualizado", "Publicación actualizada correctamente", "success");
           } else {
             const res = await api.post(`/publicaciones`, datos, {
               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
-            setPublicaciones((prev) => [...prev, res.data.publicacion]);
+            const nuevaPublicacion = res.data.publicacion || res.data;
+            setPublicaciones((prev) => [...prev, nuevaPublicacion]);
             Swal.fire("Creado", "Publicación creada correctamente", "success");
           }
         } catch (error) {
@@ -320,15 +322,17 @@ function Admin() {
             const res = await api.put(`/eventos/${eventoInicial.id}`, datos, {
               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
+            const nuevoEvento = res.data.evento || res.data;
             setEventos((prev) =>
-              prev.map((e) => (e.id === eventoInicial.id ? res.data.evento : e))
+              prev.map((e) => (e.id === eventoInicial.id ? nuevoEvento : e))
             );
             Swal.fire("Actualizado", "Evento actualizado correctamente", "success");
           } else {
             const res = await api.post(`/eventos`, datos, {
               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
-            setEventos((prev) => [...prev, res.data.evento]);
+            const nuevoEvento = res.data.evento || res.data;
+            setEventos((prev) => [...prev, nuevoEvento]);
             Swal.fire("Creado", "Evento creado correctamente", "success");
           }
         } catch (error) {
