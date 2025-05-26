@@ -35,7 +35,7 @@ function Foro() {
       <Header />
       <main className="flex-grow p-6">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-purple-600 text-center mx-auto max-w-2xl">Foro</h1>
+          <h1 className="text-4xl font-extrabold text-purple-700 mb-8 text-center drop-shadow-lg tracking-tight">Foro</h1>
           <button
             onClick={() => navigate('/crear-publicacion')}
             className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-green-500 text-white px-4 py-2 text-base font-medium hover:bg-green-600 ml-4"

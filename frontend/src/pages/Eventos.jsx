@@ -40,7 +40,7 @@ function Eventos() {
       <Header />
       <div className="flex-grow p-4">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-3xl font-bold text-purple-600 text-center mx-auto max-w-2xl">
+          <h1 className="text-4xl font-extrabold text-purple-700 mb-8 text-center drop-shadow-lg tracking-tight">
             Eventos
           </h1>
           <button
