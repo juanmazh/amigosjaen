@@ -14,6 +14,9 @@ const PerfilUsuario = () => {
   const [seguidores, setSeguidores] = useState(0);
   const [sigue, setSigue] = useState(false);
   const [cargandoSeg, setCargandoSeg] = useState(true);
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [listaSeguidores, setListaSeguidores] = useState([]);
+  const [cargandoLista, setCargandoLista] = useState(false);
 
   useEffect(() => {
     api.get(`/usuarios/${id}`)
@@ -44,6 +47,19 @@ const PerfilUsuario = () => {
     await api.post(`/usuarios/${id}/dejar-seguir`);
     setSigue(false);
     setSeguidores(seguidores - 1);
+  };
+
+  const abrirModalSeguidores = () => {
+    setModalAbierto(true);
+    setCargandoLista(true);
+    api.get(`/usuarios/${id}/seguidores-lista`)
+      .then(res => setListaSeguidores(res.data.seguidores || []))
+      .finally(() => setCargandoLista(false));
+  };
+
+  const cerrarModalSeguidores = () => {
+    setModalAbierto(false);
+    setListaSeguidores([]);
   };
 
   let fechaAlta = "";
@@ -82,7 +98,9 @@ const PerfilUsuario = () => {
                   {cargandoSeg ? (
                     <span className="text-gray-500">Cargando...</span>
                   ) : (
-                    <span className="text-purple-700 font-bold">{seguidores}</span>
+                    <button className="text-purple-700 font-bold hover:underline" onClick={abrirModalSeguidores}>
+                      {seguidores}
+                    </button>
                   )}
                   {usuarioLog && usuario && usuarioLog.id !== usuario.id && !cargandoSeg && (
                     sigue ? (
@@ -105,6 +123,30 @@ const PerfilUsuario = () => {
         {usuario && <PerfilSecciones usuario={usuario} editable={false} />}
       </main>
       <Footer />
+
+      {/* Modal de seguidores */}
+      {modalAbierto && (
+        <div className="fixed inset-0  bg-black/20 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+            <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl" onClick={cerrarModalSeguidores}>&times;</button>
+            <h3 className="text-lg font-bold mb-4 text-purple-700">Seguidores</h3>
+            {cargandoLista ? (
+              <p>Cargando...</p>
+            ) : listaSeguidores.length === 0 ? (
+              <p className="text-gray-500">No tiene seguidores.</p>
+            ) : (
+              <ul className="divide-y divide-gray-200 max-h-60 overflow-y-auto">
+                {listaSeguidores.map(user => (
+                  <li key={user.id} className="py-2">
+                    <span className="font-semibold text-purple-700">{user.nombre}</span>
+                    <span className="text-gray-500 ml-2">{user.email}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -42,6 +42,8 @@ Usuario.belongsToMany(Usuario, {
   foreignKey: 'seguidoId',
   otherKey: 'seguidorId',
 });
+// Relación para incluir el usuario seguidor en Seguidores
+Seguidores.belongsTo(Usuario, { as: 'seguidor', foreignKey: 'seguidorId' });
 
 module.exports = {
   sequelize,

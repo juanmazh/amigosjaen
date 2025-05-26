@@ -210,4 +210,26 @@ router.get('/:id/seguidores', async (req, res) => {
   }
 });
 
+// Obtener la lista de usuarios que siguen a un usuario
+router.get('/:id/seguidores-lista', async (req, res) => {
+  try {
+    const seguidoId = parseInt(req.params.id);
+    const { Usuario, Seguidores } = require('../models');
+    // Buscar todos los seguidores de este usuario
+    const seguidores = await Seguidores.findAll({
+      where: { seguidoId },
+      include: [{
+        model: Usuario,
+        as: 'seguidor',
+        attributes: ['id', 'nombre', 'email']
+      }]
+    });
+    // Extraer solo los datos del usuario seguidor
+    const lista = seguidores.map(s => s.seguidor);
+    res.json({ seguidores: lista });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener la lista de seguidores' });
+  }
+});
+
 module.exports = router;
