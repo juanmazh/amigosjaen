@@ -1,4 +1,4 @@
-require('dotenv').config(); // Asegúrate de tener esto
+require('dotenv').config(); // importante
 
 const jwt = require("jsonwebtoken");
 
@@ -19,7 +19,7 @@ module.exports = (req, res, next) => {
     res.status(401).json({ msg: "Token inválido" });
   }
 };
-require('dotenv').config(); // Asegúrate de tener esto
+require('dotenv').config(); // importante
 
 module.exports = (req, res, next) => {
   const authHeader = req.header("Authorization");

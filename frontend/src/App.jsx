@@ -11,6 +11,9 @@ import Header from "./pages/components/Header";
 import Eventos from "./pages/Eventos";
 import CrearEventoPage from "./pages/CrearEventoPage";
 import EventoDetalle from "./pages/EventoDetalle";
+import Perfil from "./pages/Perfil";
+import Amigos from "./pages/Amigos";
+import PerfilUsuario from "./pages/PerfilUsuario";
 
 function App() {
   return (
@@ -24,6 +27,9 @@ function App() {
       <Route path="/eventos" element={<Eventos />} />
       <Route path="/crear-evento" element={<CrearEventoPage />} />
       <Route path="/eventos/:id" element={<EventoDetalle />} />
+      <Route path="/perfil" element={<Perfil />} />
+      <Route path="/amigos" element={<Amigos />} />
+      <Route path="/perfil/:id" element={<PerfilUsuario />} />
     </Routes>
   );
 }

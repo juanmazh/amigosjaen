@@ -1,14 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye } from "react-icons/fa";
 import api from "../api";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import AuthContext from "../context/AuthContext";
 
 function Eventos() {
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");
 
+  const { usuario, cargando } = useContext(AuthContext);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,7 +45,13 @@ function Eventos() {
           </h1>
           <button
             className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-green-500 text-white px-4 py-2 text-base font-medium hover:bg-green-600 ml-4"
-            onClick={() => navigate("/crear-evento")}
+            onClick={() => {
+              if (!cargando && !usuario) {
+                navigate("/login");
+              } else {
+                navigate("/crear-evento");
+              }
+            }}
           >
             Crear Evento
           </button>

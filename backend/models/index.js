@@ -5,6 +5,7 @@ const Etiqueta = require('./Etiqueta');
 const Evento = require('./Evento');
 const AsistentesEventos = require('./AsistentesEventos');
 const Comentario = require('./Comentario');
+const Seguidores = require('./Seguidores');
 
 // Definir relaciones
 Usuario.hasMany(Publicacion);
@@ -28,6 +29,20 @@ Comentario.belongsTo(Usuario, { foreignKey: 'usuarioId' });
 Comentario.hasMany(Comentario, { foreignKey: 'parentId', as: 'respuestas' });
 Comentario.belongsTo(Comentario, { foreignKey: 'parentId', as: 'padre' });
 
+// Relación muchos a muchos para seguidores
+Usuario.belongsToMany(Usuario, {
+  as: 'Seguidos',
+  through: Seguidores,
+  foreignKey: 'seguidorId',
+  otherKey: 'seguidoId',
+});
+Usuario.belongsToMany(Usuario, {
+  as: 'SeguidoresUsuarios', // Cambiado para evitar conflicto de alias
+  through: Seguidores,
+  foreignKey: 'seguidoId',
+  otherKey: 'seguidorId',
+});
+
 module.exports = {
   sequelize,
   Usuario,
@@ -36,4 +51,5 @@ module.exports = {
   Evento,
   AsistentesEventos,
   Comentario,
+  Seguidores,
 };

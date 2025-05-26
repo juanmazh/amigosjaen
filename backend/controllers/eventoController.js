@@ -54,12 +54,18 @@ const crearEvento = async (req, res) => {
 // Listar eventos (con etiquetas)
 const listarEventos = async (req, res) => {
   try {
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0); // Solo fecha, sin hora
+    const maniana = new Date(hoy);
+    maniana.setDate(hoy.getDate() + 1); // Siguiente día a las 00:00
     const eventos = await Evento.findAll({
-      where: { activo: true },
+      where: {
+        activo: true,
+        fecha: { [Op.gte]: hoy }, // Incluye hoy y futuros
+      },
       include: [{ model: Etiqueta, as: "eventosTags" }],
       order: [["fecha", "ASC"]],
     });
-
     res.status(200).json(eventos);
   } catch (error) {
     console.error(error);

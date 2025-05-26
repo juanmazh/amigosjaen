@@ -4,7 +4,7 @@ import Footer from "./components/Footer";
 
 function About() {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-100">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-purple-200">
       <Header />
       <div className="flex-grow flex justify-center items-center">
         <div className="bg-white shadow-lg rounded-2xl p-8 max-w-2xl w-full">

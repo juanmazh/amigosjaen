@@ -82,6 +82,12 @@ export default function UserMenu({ usuario }) {
           </div>
           <div className="border-t border-gray-200"></div>
           <button
+            onClick={() => { setDropdownOpen(false); navigate('/perfil'); }}
+            className="w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-gray-100"
+          >
+            Mi perfil
+          </button>
+          <button
             onClick={handleLogout}
             className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100"
           >

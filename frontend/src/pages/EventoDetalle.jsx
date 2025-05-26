@@ -45,6 +45,22 @@ function EventoDetalle() {
     }
   };
 
+  // Calcular estado del evento
+  let estadoEvento = "";
+  if (evento && evento.fecha) {
+    const hoy = new Date();
+    hoy.setHours(0,0,0,0);
+    const fechaEvento = new Date(evento.fecha);
+    fechaEvento.setHours(0,0,0,0);
+    if (fechaEvento < hoy) {
+      estadoEvento = "Finalizado";
+    } else if (fechaEvento.getTime() === hoy.getTime()) {
+      estadoEvento = "Hoy";
+    } else {
+      estadoEvento = "Próximo";
+    }
+  }
+
   if (!evento) {
     return <p>Cargando evento...</p>;
   }
@@ -103,7 +119,9 @@ function EventoDetalle() {
               </div>
               <div className="flex items-center gap-2 mb-2">
                 <span className="font-semibold text-gray-600">Estado:</span>
-                <span className={`font-bold ${evento.activo ? 'text-green-500' : 'text-red-500'}`}>{evento.activo ? 'Activo' : 'Inactivo'}</span>
+                {estadoEvento && (
+                  <span className={`ml-2 px-2 py-1 rounded text-xs font-semibold ${estadoEvento === 'Finalizado' ? 'bg-red-200 text-red-800' : estadoEvento === 'Hoy' ? 'bg-yellow-200 text-yellow-800' : 'bg-green-200 text-green-800'}`}>{estadoEvento}</span>
+                )}
               </div>
               {/* Localización */}
               {evento.localizacion && (

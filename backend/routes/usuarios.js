@@ -4,6 +4,7 @@ const router = express.Router();
 const Usuario = require('../models/Usuario');
 const verificarToken = require('../middleware/verificarToken');
 const soloAdmin = require('../middleware/soloAdmin');
+const { Seguidores, Usuario: UsuarioModel } = require('../models');
 
 // Obtener todos los usuarios (solo admin)
 router.get('/', verificarToken, soloAdmin, async (req, res) => {
@@ -84,6 +85,128 @@ router.post('/', verificarToken, soloAdmin, async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: 'Error al crear el usuario' });
+  }
+});
+
+// Obtener publicaciones de un usuario
+router.get('/:id/publicaciones', async (req, res) => {
+  try {
+    const publicaciones = await require('../models/Publicacion').findAll({
+      where: { UsuarioId: req.params.id },
+      order: [['createdAt', 'DESC']]
+    });
+    res.json(publicaciones);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener publicaciones del usuario' });
+  }
+});
+
+// Obtener eventos a los que el usuario está apuntado (futuros)
+router.get('/:id/eventos-apuntado', async (req, res) => {
+  try {
+    const { Evento, Usuario } = require('../models');
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+    const eventos = await usuario.getEventosAsistidos({
+      where: { fecha: { [require('sequelize').Op.gte]: new Date() } },
+      order: [['fecha', 'ASC']]
+    });
+    res.json(eventos);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener eventos apuntados' });
+  }
+});
+
+// Obtener eventos pasados a los que el usuario asistió
+router.get('/:id/eventos-pasados', async (req, res) => {
+  try {
+    const { Evento, Usuario } = require('../models');
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+    const eventos = await usuario.getEventosAsistidos({
+      where: { fecha: { [require('sequelize').Op.lt]: new Date() } },
+      order: [['fecha', 'DESC']]
+    });
+    res.json(eventos);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener eventos pasados' });
+  }
+});
+
+// Obtener todos los usuarios públicos (sin autenticación, solo id y nombre)
+router.get('/publicos', async (req, res) => {
+  try {
+    const usuarios = await Usuario.findAll({
+      attributes: ['id', 'nombre']
+    });
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener los usuarios' });
+  }
+});
+
+// Obtener un usuario por id (público)
+router.get('/:id', async (req, res) => {
+  try {
+    const usuario = await Usuario.findByPk(req.params.id, {
+      attributes: ['id', 'nombre', 'email', 'createdAt', 'rol']
+    });
+    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+    res.json(usuario);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener el usuario' });
+  }
+});
+
+// Seguir a un usuario
+router.post('/:id/seguir', verificarToken, async (req, res) => {
+  try {
+    const seguidoId = parseInt(req.params.id);
+    const seguidorId = req.usuario.id;
+    if (seguidorId === seguidoId) return res.status(400).json({ msg: 'No puedes seguirte a ti mismo' });
+    // Verificar si ya sigue
+    const yaSigue = await Seguidores.findOne({ where: { seguidorId, seguidoId } });
+    if (yaSigue) return res.status(400).json({ msg: 'Ya sigues a este usuario' });
+    await Seguidores.create({ seguidorId, seguidoId });
+    res.json({ msg: 'Ahora sigues a este usuario' });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al seguir usuario' });
+  }
+});
+
+// Dejar de seguir a un usuario
+router.post('/:id/dejar-seguir', verificarToken, async (req, res) => {
+  try {
+    const seguidoId = parseInt(req.params.id);
+    const seguidorId = req.usuario.id;
+    const fila = await Seguidores.findOne({ where: { seguidorId, seguidoId } });
+    if (!fila) return res.status(400).json({ msg: 'No sigues a este usuario' });
+    await fila.destroy();
+    res.json({ msg: 'Has dejado de seguir a este usuario' });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al dejar de seguir usuario' });
+  }
+});
+
+// Obtener número de seguidores y si el usuario actual lo sigue
+router.get('/:id/seguidores', async (req, res) => {
+  try {
+    const seguidoId = parseInt(req.params.id);
+    const seguidores = await Seguidores.count({ where: { seguidoId } });
+    let sigue = false;
+    if (req.headers.authorization) {
+      try {
+        const token = req.headers.authorization.split(' ')[1];
+        const jwt = require('jsonwebtoken');
+        const config = require('../config/config.json');
+        const payload = jwt.verify(token, config.development.secret || config.development.JWT_SECRET);
+        const seguidorId = payload.id;
+        sigue = !!await Seguidores.findOne({ where: { seguidorId, seguidoId } });
+      } catch {}
+    }
+    res.json({ seguidores, sigue });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener seguidores' });
   }
 });
 

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import CrearPublicacion from "./components/CrearPublicacion";
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
+import Footer from "./components/Footer";
 
 function CrearPublicacionPage() {
   const navigate = useNavigate();
@@ -37,14 +38,12 @@ function CrearPublicacionPage() {
         </button>
       </header>
 
-      <main className="p-4 max-w-4xl mx-auto">
+      <main className="p-4 max-w-4xl mx-auto flex-1">
         <h2 className="text-xl font-semibold mb-4">Nueva Publicación</h2>
         <CrearPublicacion onPublicacionCreada={handlePublicacionCreada} />
       </main>
 
-      <footer className="bg-white shadow p-4 text-center text-sm text-gray-500">
-        © 2025 AmigosJaén. Todos los derechos reservados.
-      </footer>
+      <Footer />
     </div>
   );
 }

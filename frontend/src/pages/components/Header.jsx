@@ -28,7 +28,7 @@ function Header() {
       <div className="hidden md:flex justify-center items-center space-x-4">
         <button
           onClick={() => navigate('/foro')}
-          className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-indigo-400 to-indigo-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-indigo-500 hover:to-indigo-700 hover:shadow-lg transition-all duration-300"
+          className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300"
         >
           Foro
         </button>
@@ -39,8 +39,14 @@ function Header() {
           Eventos
         </button>
         <button
+          onClick={() => navigate('/amigos')}
+          className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300"
+        >
+          Amigos
+        </button>
+        <button
           onClick={() => navigate('/about')}
-          className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-pink-400 to-pink-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-pink-500 hover:to-pink-700 hover:shadow-lg transition-all duration-300"
+          className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300"
         >
           Sobre nosotros
         </button>
@@ -50,27 +56,33 @@ function Header() {
         <div className="absolute top-16 left-0 w-full bg-white shadow-lg rounded-b-2xl flex flex-col items-center z-50 md:hidden animate-fade-in">
           <button
             onClick={() => { navigate('/foro'); setMenuOpen(false); }}
-            className="w-full text-left px-6 py-3 text-base font-medium text-purple-700 hover:bg-purple-100 border-b border-gray-200"
+            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1"
           >
             Foro
           </button>
           <button
             onClick={() => { navigate('/eventos'); setMenuOpen(false); }}
-            className="w-full text-left px-6 py-3 text-base font-medium text-purple-700 hover:bg-purple-100 border-b border-gray-200"
+            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1"
           >
             Eventos
           </button>
           <button
+            onClick={() => { navigate('/amigos'); setMenuOpen(false); }}
+            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1"
+          >
+            Amigos
+          </button>
+          <button
             onClick={() => { navigate('/about'); setMenuOpen(false); }}
-            className="w-full text-left px-6 py-3 text-base font-medium text-purple-700 hover:bg-purple-100 border-b border-gray-200"
+            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1"
           >
             Sobre nosotros
           </button>
           <div className="w-full flex flex-col items-center py-2">
             {!usuario ? (
               <>
-                <Link to="/login" onClick={() => setMenuOpen(false)} className="w-full text-left px-6 py-2 text-base font-medium text-blue-700 hover:bg-blue-100">Iniciar Sesión</Link>
-                <Link to="/register" onClick={() => setMenuOpen(false)} className="w-full text-left px-6 py-2 text-base font-medium text-green-700 hover:bg-green-100">Registrarse</Link>
+                <Link to="/login" onClick={() => setMenuOpen(false)} className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1 text-center">Iniciar Sesión</Link>
+                <Link to="/register" onClick={() => setMenuOpen(false)} className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1 text-center">Registrarse</Link>
               </>
             ) : (
               <UserMenu usuario={usuario} />
@@ -82,12 +94,8 @@ function Header() {
       <div className="space-x-4 hidden md:flex">
         {!usuario ? (
           <>
-            <Link to="/login" className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-blue-400 to-blue-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-blue-500 hover:to-blue-700 hover:shadow-lg transition-all duration-300">
-              Iniciar Sesión
-            </Link>
-            <Link to="/register" className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-green-400 to-green-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-green-500 hover:to-green-700 hover:shadow-lg transition-all duration-300">
-              Registrarse
-            </Link>
+            <Link to="/login" className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300">Iniciar Sesión</Link>
+            <Link to="/register" className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300">Registrarse</Link>
           </>
         ) : (
           <UserMenu usuario={usuario} />
