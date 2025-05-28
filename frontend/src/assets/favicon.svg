@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Fondo: morado bandera Jaén -->
+  <circle cx="32" cy="32" r="30" fill="#800080"/>
+  <!-- Sombra para dar profundidad -->
+  <ellipse cx="32" cy="50" rx="18" ry="4" fill="#4b004b" opacity="0.25"/>
+  <!-- Letras principales con color blanco -->
+  <text x="35%" y="65%" text-anchor="middle" font-size="32" font-family="Arial, sans-serif" fill="#fff" font-weight="bold">A</text>
+  <text x="65%" y="65%" text-anchor="middle" font-size="32" font-family="Arial, sans-serif" fill="#fff" font-weight="bold">J</text>
+  <!-- Detalle: corazón pequeño entre las letras, color verde bandera Jaén -->
+  <path d="M32 44 Q31 42 29.5 42 Q28 42 28 43.5 Q28 45 32 48 Q36 45 36 43.5 Q36 42 34.5 42 Q33 42 32 44 Z" fill="#008000"/>
+</svg>
