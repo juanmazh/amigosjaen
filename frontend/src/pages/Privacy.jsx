@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Privacy() {
   return (
-    <div className="max-w-2xl mx-auto py-10 px-4">
+    <div className="max-w-2xl mx-auto py-10 px-4 bg-gradient-to-br from-pink-100 to-purple-200">
       <h1 className="text-2xl font-bold mb-4">Política de Privacidad</h1>
       <p className="mb-2">En AmigosJaen valoramos tu privacidad. Esta página describe cómo recopilamos, usamos y protegemos tu información personal.</p>
       <h2 className="text-xl font-semibold mt-6 mb-2">¿Qué datos recopilamos?</h2>
@@ -25,7 +25,7 @@ export default function Privacy() {
         <li>Solicitar la portabilidad de tus datos.</li>
         <li>Oponerte al tratamiento de tus datos.</li>
       </ul>
-      <p className="mt-6">Para ejercer tus derechos o resolver dudas, contacta con <a href="mailto:juanmazh@gmail.com" className="text-blue-400 underline">juanmazh@gmail.com</a>.</p>
+      <p className="mt-6">Para ejercer tus derechos o resolver dudas, contacta con <a href="mailto:juanmazh.dev@gmail.com" className="text-blue-400 underline">juanmazh.dev@gmail.com</a>.</p>
     </div>
   );
 }
