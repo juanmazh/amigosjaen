@@ -14,6 +14,8 @@ import EventoDetalle from "./pages/EventoDetalle";
 import Perfil from "./pages/Perfil";
 import Amigos from "./pages/Amigos";
 import PerfilUsuario from "./pages/PerfilUsuario";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
       <Route path="/perfil" element={<Perfil />} />
       <Route path="/amigos" element={<Amigos />} />
       <Route path="/perfil/:id" element={<PerfilUsuario />} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
     </Routes>
   );
 }

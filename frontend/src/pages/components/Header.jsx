@@ -12,7 +12,7 @@ function Header() {
   return (
     <header className="bg-white shadow p-4 flex justify-between items-center relative">
       <h1 className="text-2xl font-bold text-purple-600">
-        <Link to="/">AmigosJaén</Link>
+        <Link to="/" className="hover:underline hover:text-purple-800 transition-colors duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-400 rounded">AmigosJaén</Link>
       </h1>
       {/* Botón hamburguesa para móviles */}
       <button
