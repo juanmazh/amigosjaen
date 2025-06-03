@@ -6,7 +6,7 @@ function Footer() {
       <div className="container mx-auto text-center">
         <p className="text-sm">
           <a href="https://amigosjaen.netlify.app/">AmigosJaen</a>
-          © 2025 by <a href="https://github.com/juanmazh">Juan Manuel Zafra Hernández</a>
+          © 2025 by <a href="https://github.com/juanmazh">Juan Manuel Zafra Hernández </a>
           is licensed under <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
           <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" className="inline align-text-bottom ml-1" style={{maxWidth: '1em', maxHeight: '1em'}} alt="CC" />
           <img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" className="inline align-text-bottom ml-1" style={{maxWidth: '1em', maxHeight: '1em'}} alt="BY" />
