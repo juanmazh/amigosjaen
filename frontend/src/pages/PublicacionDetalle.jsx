@@ -28,17 +28,17 @@ function PublicacionDetalle() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-purple-200">
       <Header />
-      <main className="flex-grow p-6 max-w-4xl mx-auto">
-        <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-          <h2 className="text-3xl font-bold mb-4">{publicacion.titulo}</h2>
-          <p className="text-gray-600 mb-4">{publicacion.contenido}</p>
-          <p className="text-sm text-gray-400">Autor: {publicacion.autorNombre}</p>
+      <main className="flex-grow p-2 sm:p-4 md:p-6 max-w-full sm:max-w-2xl md:max-w-4xl mx-auto w-full">
+        <div className="bg-white shadow-md rounded-lg p-3 sm:p-4 md:p-6 mb-4 sm:mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-4 break-words">{publicacion.titulo}</h2>
+          <p className="text-gray-600 mb-2 sm:mb-4 break-words whitespace-pre-line">{publicacion.contenido}</p>
+          <p className="text-xs sm:text-sm text-gray-400">Autor: {publicacion.autorNombre}</p>
           {publicacion.tags && publicacion.tags.length > 0 && (
-            <div className="mt-4">
-              <h4 className="text-lg font-semibold mb-2">Etiquetas:</h4>
-              <div className="flex flex-wrap gap-2">
+            <div className="mt-2 sm:mt-4">
+              <h4 className="text-base sm:text-lg font-semibold mb-1 sm:mb-2">Etiquetas:</h4>
+              <div className="flex flex-wrap gap-1 sm:gap-2">
                 {publicacion.tags.map((tag, index) => (
-                  <span key={index} className="bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-sm">
+                  <span key={index} className="bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-xs sm:text-sm">
                     {tag.nombre}
                   </span>
                 ))}
@@ -49,7 +49,7 @@ function PublicacionDetalle() {
           {/* Botón de borrar si el usuario es el autor */}
           {usuario && usuario.nombre === publicacion.autorNombre && (
             <button
-              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700 mt-4"
+              className="bg-red-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-red-700 mt-3 sm:mt-4 text-sm sm:text-base"
               onClick={async () => {
                 const confirm = await Swal.fire({
                   title: '¿Eliminar publicación?',
@@ -81,7 +81,7 @@ function PublicacionDetalle() {
           {/* Botón de editar si el usuario es el autor */}
           {usuario && usuario.nombre === publicacion.autorNombre && (
             <button
-              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4 mr-2"
+              className="bg-blue-500 text-white px-3 sm:px-4 py-2 rounded hover:bg-blue-700 mt-3 sm:mt-4 mr-2 text-sm sm:text-base"
               onClick={async () => {
                 const { value: formValues } = await Swal.fire({
                   title: 'Editar publicación',
@@ -123,8 +123,8 @@ function PublicacionDetalle() {
           )}
         </div>
 
-        <div className="bg-white/80 shadow-inner rounded-lg p-4">
-          <h3 className="text-xl font-semibold mb-2">Comentarios</h3>
+        <div className="bg-white/80 shadow-inner rounded-lg p-2 sm:p-4">
+          <h3 className="text-lg sm:text-xl font-semibold mb-1 sm:mb-2">Comentarios</h3>
           <Comentarios publicacionId={publicacion.id} onNuevoComentario={() => setRefrescarComentarios(!refrescarComentarios)} />
         </div>
       </main>
