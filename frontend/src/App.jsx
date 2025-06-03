@@ -16,25 +16,31 @@ import Amigos from "./pages/Amigos";
 import PerfilUsuario from "./pages/PerfilUsuario";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
+import ChatWidget from "./pages/components/ChatWidget";
+import './assets/styles/index.css';
+import './assets/styles/App.css';
 
 function App() {
   return (
-    <Routes>
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/" element={<Home />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/crear-publicacion" element={<CrearPublicacionPage />} />
-      <Route path="/foro" element={<Foro />} />
-      <Route path="/eventos" element={<Eventos />} />
-      <Route path="/crear-evento" element={<CrearEventoPage />} />
-      <Route path="/eventos/:id" element={<EventoDetalle />} />
-      <Route path="/perfil" element={<Perfil />} />
-      <Route path="/amigos" element={<Amigos />} />
-      <Route path="/perfil/:id" element={<PerfilUsuario />} />
-      <Route path="/privacy" element={<Privacy />} />
-      <Route path="/terms" element={<Terms />} />
-    </Routes>
+    <>
+      <Routes>
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/crear-publicacion" element={<CrearPublicacionPage />} />
+        <Route path="/foro" element={<Foro />} />
+        <Route path="/eventos" element={<Eventos />} />
+        <Route path="/crear-evento" element={<CrearEventoPage />} />
+        <Route path="/eventos/:id" element={<EventoDetalle />} />
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/amigos" element={<Amigos />} />
+        <Route path="/perfil/:id" element={<PerfilUsuario />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+      </Routes>
+      <ChatWidget />
+    </>
   );
 }
 

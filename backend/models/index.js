@@ -6,6 +6,7 @@ const Evento = require('./Evento');
 const AsistentesEventos = require('./AsistentesEventos');
 const Comentario = require('./Comentario');
 const Seguidores = require('./Seguidores');
+const MensajeDirecto = require('./MensajeDirecto')(sequelize);
 
 // Definir relaciones
 Usuario.hasMany(Publicacion);
@@ -44,6 +45,13 @@ Usuario.belongsToMany(Usuario, {
 });
 // Relación para incluir el usuario seguidor en Seguidores
 Seguidores.belongsTo(Usuario, { as: 'seguidor', foreignKey: 'seguidorId' });
+// Relación para incluir el usuario seguido en Seguidores
+Seguidores.belongsTo(Usuario, { as: 'seguido', foreignKey: 'seguidoId' });
+
+// Asociar MensajeDirecto con Usuario (remitente y destinatario)
+if (MensajeDirecto.associate) {
+  MensajeDirecto.associate({ Usuario });
+}
 
 module.exports = {
   sequelize,
@@ -54,4 +62,5 @@ module.exports = {
   AsistentesEventos,
   Comentario,
   Seguidores,
+  MensajeDirecto,
 };

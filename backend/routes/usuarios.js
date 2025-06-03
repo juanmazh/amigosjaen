@@ -232,4 +232,27 @@ router.get('/:id/seguidores-lista', async (req, res) => {
   }
 });
 
+// Obtener usuarios a los que sigue un usuario (para chat)
+router.get('/:id/seguidos', async (req, res) => {
+  try {
+    const seguidorId = parseInt(req.params.id);
+    const { Usuario, Seguidores } = require('../models');
+    // Buscar todos los seguidos por este usuario
+    const seguidos = await Seguidores.findAll({
+      where: { seguidorId },
+      include: [{
+        model: Usuario,
+        as: 'seguido',
+        attributes: ['id', 'nombre', 'email']
+      }]
+    });
+    // Extraer solo los datos del usuario seguido
+    const lista = seguidos.map(s => s.seguido);
+    res.setHeader('Content-Type', 'application/json');
+    res.json(lista);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener la lista de seguidos' });
+  }
+});
+
 module.exports = router;
