@@ -144,7 +144,6 @@ const ChatWidget = () => {
       .then(res => res.json())
       .then(data => {
         setMensajes(Array.isArray(data) ? data : []);
-        // Si la conversación no estaba en la lista, añádela dinámicamente
         setConversaciones(prev => {
           if (!prev.some(conv => conv.usuario.id === otroUsuario.id)) {
             return [...prev, { usuario: otroUsuario }];

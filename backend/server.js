@@ -21,6 +21,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173', // Frontend en desarrollo
     'https://amigosjaen.netlify.app', // Frontend en producción
+    'https://amigosjaen.onrender.com', // Backend en producción (Render)
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true, // Permitir envío de cookies o credenciales
@@ -46,6 +47,7 @@ const io = socketIo(server, {
     origin: [
       'http://localhost:5173',
       'https://amigosjaen.netlify.app',
+      'https://amigosjaen.onrender.com',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,

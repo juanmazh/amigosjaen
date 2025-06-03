@@ -24,4 +24,3 @@ const AsistentesEventos = sequelize.define("AsistentesEventos", {
 });
 
 module.exports = AsistentesEventos;
-// Elimino las relaciones directas para evitar referencias circulares, ahora están en models/index.js
