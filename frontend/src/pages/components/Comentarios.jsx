@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import api from "../../api";
 import AuthContext from "../../context/AuthContext";
-import { FaReply } from "react-icons/fa";
+import { FaReply, FaComment } from "react-icons/fa";
 
 function Comentarios({ publicacionId, onNuevoComentario }) {
   const [comentarios, setComentarios] = useState([]);
@@ -111,10 +111,11 @@ function Comentarios({ publicacionId, onNuevoComentario }) {
             onChange={e => setNuevoComentario(e.target.value)}
           />
           <button
-            className="bg-purple-600 text-white px-3 py-1 rounded"
+            className="bg-purple-600 text-white px-3 py-1 rounded flex items-center gap-1"
             onClick={() => handleEnviar()}
           >
-            Comentar
+            <span className="hidden sm:inline">Comentar</span>
+            <FaComment className="w-5 h-5" />
           </button>
         </div>
       )}
