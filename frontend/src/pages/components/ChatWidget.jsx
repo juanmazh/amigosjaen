@@ -3,8 +3,8 @@ import { io } from 'socket.io-client';
 import { FaComments, FaArrowLeft, FaUserPlus, FaListUl, FaComment } from 'react-icons/fa';
 import AuthContext from '../../context/AuthContext';
 import '../../assets/styles/ChatWidget.css';
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+//const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://localhost:5000';  Cambia esto a tu URL de socket.io en producción
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://amigosjaen.onrender.com';
 
 const ChatWidget = () => {
   const { usuario } = useContext(AuthContext);
@@ -94,7 +94,7 @@ const ChatWidget = () => {
   useEffect(() => {
     if (usuario) {
       const token = localStorage.getItem('token');
-      fetch(`http://localhost:5000/api/mensajes/conversaciones/${usuario.id}`, {
+      fetch(`https://amigosjaen.onrender.com/api/mensajes/conversaciones/${usuario.id}`, {
         credentials: 'include',
         headers: {
           'Authorization': token ? `Bearer ${token}` : undefined,
@@ -121,7 +121,7 @@ const ChatWidget = () => {
   // Cargar usuarios seguidos
   useEffect(() => {
     if (usuario) {
-      fetch(`http://localhost:5000/api/usuarios/${usuario.id}/seguidos`, { credentials: 'include' })
+      fetch(`https://amigosjaen.onrender.com/api/usuarios/${usuario.id}/seguidos`, { credentials: 'include' })
         .then(res => res.json())
         .then(data => setSeguidores(data))
         .catch(err => {
@@ -135,7 +135,7 @@ const ChatWidget = () => {
     setUsuarioActivo(otroUsuario);
     setTab('conversaciones');
     const token = localStorage.getItem('token');
-    fetch(`http://localhost:5000/api/mensajes/${otroUsuario.id}`, {
+    fetch(`https://amigosjaen.onrender.com/api/mensajes/${otroUsuario.id}`, {
       credentials: 'include',
       headers: {
         'Authorization': token ? `Bearer ${token}` : undefined,
