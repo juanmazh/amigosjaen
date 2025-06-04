@@ -198,8 +198,7 @@ router.get('/:id/seguidores', async (req, res) => {
       try {
         const token = req.headers.authorization.split(' ')[1];
         const jwt = require('jsonwebtoken');
-        const config = require('../config/config.json');
-        const payload = jwt.verify(token, config.development.secret || config.development.JWT_SECRET);
+        const payload = jwt.verify(token, process.env.JWT_SECRET);
         const seguidorId = payload.id;
         sigue = !!await Seguidores.findOne({ where: { seguidorId, seguidoId } });
       } catch {}
