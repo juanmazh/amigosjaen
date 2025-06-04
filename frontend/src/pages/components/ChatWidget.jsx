@@ -60,13 +60,21 @@ const ChatWidget = () => {
       setConversaciones(prev => {
         // Determina el otro usuario
         const otroId = mensaje.remitenteId === usuario.id ? mensaje.destinatarioId : mensaje.remitenteId;
+        // Si el chat NO está abierto con ese usuario y el mensaje es para mí, marcar como no leído
+        let mensajeActualizado = { ...mensaje };
+        if (
+          mensaje.destinatarioId === usuario.id &&
+          (!usuarioActivo || usuarioActivo.id !== otroId)
+        ) {
+          mensajeActualizado.leido = false;
+        }
         // Si ya existe la conversación, actualiza el último mensaje y la sube arriba
         const existe = prev.find(conv => conv.usuario.id === otroId);
         if (existe) {
           return [
             {
               ...existe,
-              ultimoMensaje: mensaje,
+              ultimoMensaje: mensajeActualizado,
             },
             ...prev.filter(conv => conv.usuario.id !== otroId)
           ];
@@ -76,8 +84,8 @@ const ChatWidget = () => {
           return [
             {
               usuario: usuarioConv,
-              ultimoMensaje: mensaje,
-              mensajes: [mensaje],
+              ultimoMensaje: mensajeActualizado,
+              mensajes: [mensajeActualizado],
             },
             ...prev
           ];
@@ -88,7 +96,7 @@ const ChatWidget = () => {
     return () => {
       socketRef.current.off('nuevoMensaje', actualizarConversaciones);
     };
-  }, [usuario, seguidores]);
+  }, [usuario, seguidores, usuarioActivo]);
 
   // Cargar conversaciones recientes
   useEffect(() => {
