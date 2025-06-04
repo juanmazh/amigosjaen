@@ -18,6 +18,7 @@ const PerfilUsuario = () => {
   const [listaSeguidores, setListaSeguidores] = useState([]);
   const [cargandoLista, setCargandoLista] = useState(false);
   const [cargandoBoton, setCargandoBoton] = useState(false);
+  const [errorBoton, setErrorBoton] = useState("");
 
   useEffect(() => {
     api.get(`/usuarios/${id}`)
@@ -41,18 +42,22 @@ const PerfilUsuario = () => {
 
   const handleSeguir = async () => {
     setCargandoBoton(true);
+    setErrorBoton("");
     try {
       await api.post(`/usuarios/${id}/seguir`);
-      // No modificar sigue/seguidores aquí, dejar que el useEffect los actualice
+    } catch (err) {
+      setErrorBoton("No se pudo seguir al usuario. Puede que ya lo sigas.");
     } finally {
       setCargandoBoton(false);
     }
   };
   const handleDejarSeguir = async () => {
     setCargandoBoton(true);
+    setErrorBoton("");
     try {
       await api.post(`/usuarios/${id}/dejar-seguir`);
-      // No modificar sigue/seguidores aquí, dejar que el useEffect los actualice
+    } catch (err) {
+      setErrorBoton("No se pudo dejar de seguir al usuario.");
     } finally {
       setCargandoBoton(false);
     }
@@ -129,6 +134,9 @@ const PerfilUsuario = () => {
                         Seguir
                       </button>
                     )
+                  )}
+                  {errorBoton && (
+                    <div className="text-red-500 text-sm mt-2">{errorBoton}</div>
                   )}
                 </div>
               </div>
