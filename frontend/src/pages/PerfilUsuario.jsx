@@ -32,7 +32,11 @@ const PerfilUsuario = () => {
   useEffect(() => {
     if (!id) return;
     setCargandoSeg(true);
-    api.get(`/usuarios/${id}/seguidores`)
+    // Añadir token si existe
+    const token = localStorage.getItem('token');
+    api.get(`/usuarios/${id}/seguidores`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
       .then(res => {
         setSeguidores(res.data.seguidores);
         setSigue(res.data.sigue);
