@@ -32,10 +32,7 @@ const PerfilUsuario = () => {
   // Función para cargar seguidores y estado de seguimiento
   const cargarSeguidores = () => {
     setCargandoSeg(true);
-    const token = localStorage.getItem('token');
-    api.get(`/usuarios/${id}/seguidores`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {}
-    })
+    api.get(`/usuarios/${id}/seguidores`)
       .then(res => {
         setSeguidores(res.data.seguidores);
         setSigue(res.data.sigue);
@@ -44,9 +41,9 @@ const PerfilUsuario = () => {
   };
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || cargandoAuth || !usuarioLog) return;
     cargarSeguidores();
-  }, [id, usuarioLog]); 
+  }, [id, usuarioLog, cargandoAuth]); 
   const handleSeguir = async () => {
     setCargandoBoton(true);
     setErrorBoton("");
