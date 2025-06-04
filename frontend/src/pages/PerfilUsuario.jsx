@@ -29,10 +29,9 @@ const PerfilUsuario = () => {
       .catch(() => setCargando(false));
   }, [id]);
 
-  useEffect(() => {
-    if (!id) return;
+  // Función para cargar seguidores y estado de seguimiento
+  const cargarSeguidores = () => {
     setCargandoSeg(true);
-    // Añadir token si existe
     const token = localStorage.getItem('token');
     api.get(`/usuarios/${id}/seguidores`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {}
@@ -42,13 +41,18 @@ const PerfilUsuario = () => {
         setSigue(res.data.sigue);
       })
       .finally(() => setCargandoSeg(false));
-  }, [id, usuarioLog, sigue]); // <-- añadimos 'sigue' como dependencia
+  };
 
+  useEffect(() => {
+    if (!id) return;
+    cargarSeguidores();
+  }, [id, usuarioLog]); 
   const handleSeguir = async () => {
     setCargandoBoton(true);
     setErrorBoton("");
     try {
       await api.post(`/usuarios/${id}/seguir`);
+      cargarSeguidores(); // recarga tras acción
     } catch (err) {
       setErrorBoton("No se pudo seguir al usuario. Puede que ya lo sigas.");
     } finally {
@@ -60,6 +64,7 @@ const PerfilUsuario = () => {
     setErrorBoton("");
     try {
       await api.post(`/usuarios/${id}/dejar-seguir`);
+      cargarSeguidores(); // recarga tras acción
     } catch (err) {
       setErrorBoton("No se pudo dejar de seguir al usuario.");
     } finally {
