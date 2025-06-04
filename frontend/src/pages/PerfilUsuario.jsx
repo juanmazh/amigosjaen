@@ -34,8 +34,13 @@ const PerfilUsuario = () => {
     setCargandoSeg(true);
     api.get(`/usuarios/${id}/seguidores`)
       .then(res => {
+        // Si el usuario logueado es el mismo que el perfil, nunca puede seguirse a sí mismo
+        if (usuarioLog && usuarioLog.id === Number(id)) {
+          setSigue(false);
+        } else {
+          setSigue(res.data.sigue);
+        }
         setSeguidores(res.data.seguidores);
-        setSigue(res.data.sigue);
       })
       .finally(() => setCargandoSeg(false));
   };
