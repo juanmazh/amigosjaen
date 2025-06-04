@@ -8,8 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "postbuild": "copy public\\_redirects dist\\_redirects"
-  },
+    "postbuild": "cp public_redirects dist_redirects"  },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.4",
     "axios": "^1.8.4",
