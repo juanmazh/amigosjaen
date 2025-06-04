@@ -55,6 +55,12 @@ function Header() {
         >
           Sobre nosotros
         </button>
+        <button
+          onClick={() => navigate('/valoraciones')}
+          className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300"
+        >
+          Valoraciones
+        </button>
       </div>
       {/* Menú móvil desplegable */}
       {menuOpen && (
@@ -82,6 +88,12 @@ function Header() {
             className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1"
           >
             Sobre nosotros
+          </button>
+          <button
+            onClick={() => { navigate('/valoraciones'); setMenuOpen(false); }}
+            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1"
+          >
+            Valoraciones
           </button>
           <div className="w-full flex flex-col items-center py-2">
             {!usuario ? (

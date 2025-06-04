@@ -254,4 +254,20 @@ router.get('/:id/seguidos', async (req, res) => {
   }
 });
 
+// Obtener eventos finalizados a los que el usuario asistió (para valoraciones)
+router.get('/:id/eventos-asistidos', async (req, res) => {
+  try {
+    const { Evento, Usuario } = require('../models');
+    const usuario = await Usuario.findByPk(req.params.id);
+    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+    const eventos = await usuario.getEventosAsistidos({
+      where: { fecha: { [require('sequelize').Op.lt]: new Date() } },
+      order: [['fecha', 'DESC']]
+    });
+    res.json({ eventos });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener eventos asistidos' });
+  }
+});
+
 module.exports = router;
