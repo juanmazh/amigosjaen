@@ -57,7 +57,7 @@ export default function UserMenu({ usuario }) {
       <button
         ref={trigger}
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-purple-500 text-white px-4 py-2 text-base font-medium hover:bg-purple-600"
+        className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300"
       >
         {usuario.nombre || "Cuenta"}
         <span
@@ -83,13 +83,13 @@ export default function UserMenu({ usuario }) {
           <div className="border-t border-gray-200"></div>
           <button
             onClick={() => { setDropdownOpen(false); navigate('/perfil'); }}
-            className="w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-gray-100"
+            className="w-full text-left px-4 py-2 text-sm text-purple-600 hover:bg-purple-100/70 hover:text-purple-800 rounded-lg transition-all duration-200"
           >
             Mi perfil
           </button>
           <button
             onClick={handleLogout}
-            className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-gray-100"
+            className="w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-100/70 hover:text-red-700 rounded-lg transition-all duration-200"
           >
             Cerrar sesión
           </button>
