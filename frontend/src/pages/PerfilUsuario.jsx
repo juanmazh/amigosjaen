@@ -54,8 +54,9 @@ const PerfilUsuario = () => {
     setErrorBoton("");
     try {
       await api.post(`/usuarios/${id}/seguir`);
-      cargarSeguidores(); // recarga tras acción
+      await cargarSeguidores(); // Espera a que termine antes de continuar
     } catch (err) {
+      await cargarSeguidores(); // Asegura recarga aunque haya error
       setErrorBoton("No se pudo seguir al usuario. Puede que ya lo sigas.");
     } finally {
       setCargandoBoton(false);
@@ -66,8 +67,9 @@ const PerfilUsuario = () => {
     setErrorBoton("");
     try {
       await api.post(`/usuarios/${id}/dejar-seguir`);
-      cargarSeguidores(); // recarga tras acción
+      await cargarSeguidores();
     } catch (err) {
+      await cargarSeguidores();
       setErrorBoton("No se pudo dejar de seguir al usuario.");
     } finally {
       setCargandoBoton(false);
