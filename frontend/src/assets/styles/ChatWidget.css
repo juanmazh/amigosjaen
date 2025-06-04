@@ -249,7 +249,7 @@
   color: #fff;
   border-radius: 16px 16px 4px 16px;
   padding: 7px 14px;
-  margin: 6px 4vw 6px 10vw;
+  margin: 6px 0 6px auto;
   width: fit-content;
   min-width: 48px;
   max-width: 80%;
@@ -264,7 +264,7 @@
   color: var(--color-texto);
   border-radius: 16px 16px 16px 4px;
   padding: 7px 14px;
-  margin: 6px 10vw 6px 4vw;
+  margin: 6px auto 6px 0;
   width: fit-content;
   min-width: 48px;
   max-width: 80%;
@@ -397,7 +397,7 @@
     bottom: 20px;
   }
   .msg-propio-pro, .msg-ajeno-pro {
-    max-width: 90%;
+    max-width: 95%;
   }
 }
 
