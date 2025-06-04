@@ -17,6 +17,7 @@ const PerfilUsuario = () => {
   const [modalAbierto, setModalAbierto] = useState(false);
   const [listaSeguidores, setListaSeguidores] = useState([]);
   const [cargandoLista, setCargandoLista] = useState(false);
+  const [cargandoBoton, setCargandoBoton] = useState(false);
 
   useEffect(() => {
     api.get(`/usuarios/${id}`)
@@ -36,17 +37,27 @@ const PerfilUsuario = () => {
         setSigue(res.data.sigue);
       })
       .finally(() => setCargandoSeg(false));
-  }, [id, usuarioLog]);
+  }, [id, usuarioLog, sigue]); // <-- añadimos 'sigue' como dependencia
 
   const handleSeguir = async () => {
-    await api.post(`/usuarios/${id}/seguir`);
-    setSigue(true);
-    setSeguidores(seguidores + 1);
+    setCargandoBoton(true);
+    try {
+      await api.post(`/usuarios/${id}/seguir`);
+      setSigue(true);
+      setSeguidores(seguidores + 1);
+    } finally {
+      setCargandoBoton(false);
+    }
   };
   const handleDejarSeguir = async () => {
-    await api.post(`/usuarios/${id}/dejar-seguir`);
-    setSigue(false);
-    setSeguidores(seguidores - 1);
+    setCargandoBoton(true);
+    try {
+      await api.post(`/usuarios/${id}/dejar-seguir`);
+      setSigue(false);
+      setSeguidores(seguidores - 1);
+    } finally {
+      setCargandoBoton(false);
+    }
   };
 
   const abrirModalSeguidores = () => {
@@ -103,7 +114,15 @@ const PerfilUsuario = () => {
                     </button>
                   )}
                   {usuarioLog && usuario && usuarioLog.id !== usuario.id && !cargandoSeg && (
-                    sigue ? (
+                    cargandoBoton ? (
+                      <button className="mt-2 px-4 py-1 rounded bg-gray-300 text-gray-700 flex items-center justify-center" disabled>
+                        <svg className="animate-spin h-5 w-5 mr-2 text-purple-700" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                        </svg>
+                        Procesando...
+                      </button>
+                    ) : sigue ? (
                       <button className="mt-2 px-4 py-1 rounded bg-gray-300 text-gray-700 hover:bg-gray-400" onClick={handleDejarSeguir}>
                         Dejar de seguir
                       </button>
