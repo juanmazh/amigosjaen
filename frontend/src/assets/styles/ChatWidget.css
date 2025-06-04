@@ -66,7 +66,7 @@
   border-radius: 12px;
   box-shadow: 0 4px 24px rgba(0,0,0,0.18);
   padding: 0;
-  overflow: hidden;
+  height: 350px;
   display: flex;
   flex-direction: column;
 }
@@ -94,8 +94,8 @@
 .chat-content {
   padding: 12px;
   flex: 1;
-  min-height: 200px;
-  max-height: 350px;
+  min-height: 0; /* Permite que el contenido crezca y ocupe el espacio */
+  max-height: none;
   overflow-y: auto;
 }
 
@@ -152,6 +152,7 @@
 .chat-form {
   display: flex;
   gap: 6px;
+  margin-bottom: 0; /* Elimina espacio extra inferior */
 }
 
 .chat-form input {
