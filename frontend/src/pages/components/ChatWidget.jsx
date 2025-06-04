@@ -153,10 +153,32 @@ const ChatWidget = () => {
       .then(data => {
         setMensajes(Array.isArray(data) ? data : []);
         setConversaciones(prev => {
-          if (!prev.some(conv => conv.usuario.id === otroUsuario.id)) {
-            return [...prev, { usuario: otroUsuario }];
+          let actualizado = prev;
+          // Marcar como leídos los mensajes de este usuario en el estado local
+          actualizado = actualizado.map(conv => {
+            if (conv.usuario.id === otroUsuario.id && conv.ultimoMensaje && conv.ultimoMensaje.remitenteId !== usuario.id) {
+              return {
+                ...conv,
+                ultimoMensaje: { ...conv.ultimoMensaje, leido: true },
+              };
+            }
+            return conv;
+          });
+          // Si no existe la conversación, la añade
+          if (!actualizado.some(conv => conv.usuario.id === otroUsuario.id)) {
+            actualizado = [...actualizado, { usuario: otroUsuario }];
           }
-          return prev;
+          return actualizado;
+        });
+        // Llama al backend para marcar como leídos
+        fetch(`https://amigosjaen.onrender.com/api/mensajes/leido`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : undefined,
+          },
+          body: JSON.stringify({ remitenteId: otroUsuario.id }),
         });
       })
       .catch(err => {
