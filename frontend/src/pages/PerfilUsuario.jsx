@@ -140,7 +140,13 @@ const PerfilUsuario = () => {
                       </button>
                     ) : (
                       sigue ? (
-                        <button className="mt-2 px-4 py-1 rounded bg-red-600 text-white-700 hover:bg-gray-400" onClick={handleDejarSeguir}>
+                        <button
+                          className="mt-2 px-4 py-1 rounded bg-red-500 text-white font-semibold shadow hover:bg-red-600 transition-colors duration-200 border border-red-600 flex items-center gap-2"
+                          onClick={handleDejarSeguir}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
                           Dejar de seguir
                         </button>
                       ) : (
