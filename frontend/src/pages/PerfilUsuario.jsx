@@ -43,8 +43,7 @@ const PerfilUsuario = () => {
     setCargandoBoton(true);
     try {
       await api.post(`/usuarios/${id}/seguir`);
-      setSigue(true);
-      setSeguidores(seguidores + 1);
+      // No modificar sigue/seguidores aquí, dejar que el useEffect los actualice
     } finally {
       setCargandoBoton(false);
     }
@@ -53,8 +52,7 @@ const PerfilUsuario = () => {
     setCargandoBoton(true);
     try {
       await api.post(`/usuarios/${id}/dejar-seguir`);
-      setSigue(false);
-      setSeguidores(seguidores - 1);
+      // No modificar sigue/seguidores aquí, dejar que el useEffect los actualice
     } finally {
       setCargandoBoton(false);
     }
