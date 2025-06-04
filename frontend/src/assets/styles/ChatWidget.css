@@ -200,7 +200,7 @@
 
 .chat-messages-pro {
   display: flex;
-  flex-direction: flex-start;
+  flex-direction: column;
   height: 100%;
 }
 
@@ -249,8 +249,8 @@
   color: #fff;
   border-radius: 16px 16px 4px 16px;
   padding: 7px 14px;
-  margin: 6px 0 6px 40px;
-  max-width: 80%;
+  margin: 6px 4vw 6px 10vw;
+  max-width: 100%;
   word-break: break-word;
   font-size: 15px;
   box-shadow: 0 1px 4px rgba(124, 58, 237, 0.08);
@@ -262,8 +262,8 @@
   color: var(--color-texto);
   border-radius: 16px 16px 16px 4px;
   padding: 7px 14px;
-  margin: 6px 40px 6px 0;
-  max-width: 80%;
+  margin: 6px 10vw 6px 4vw;
+  max-width: 100%;
   word-break: break-word;
   font-size: 15px;
   border: 1px solid var(--color-borde);
@@ -391,6 +391,11 @@
   .chat-widget-fixed {
     right: 8px;
     bottom: 20px;
+  }
+  .msg-propio-pro, .msg-ajeno-pro {
+    margin-left: 2vw;
+    margin-right: 2vw;
+    max-width: 100%;
   }
 }
 
