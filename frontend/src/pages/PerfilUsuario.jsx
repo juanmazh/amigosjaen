@@ -134,14 +134,16 @@ const PerfilUsuario = () => {
                         </svg>
                         Procesando...
                       </button>
-                    ) : sigue ? (
-                      <button className="mt-2 px-4 py-1 rounded bg-gray-300 text-gray-700 hover:bg-gray-400" onClick={handleDejarSeguir}>
-                        Dejar de seguir
-                      </button>
                     ) : (
-                      <button className="mt-2 px-4 py-1 rounded bg-purple-600 text-white hover:bg-purple-700" onClick={handleSeguir}>
-                        Seguir
-                      </button>
+                      sigue ? (
+                        <button className="mt-2 px-4 py-1 rounded bg-gray-300 text-gray-700 hover:bg-gray-400" onClick={handleDejarSeguir}>
+                          Dejar de seguir
+                        </button>
+                      ) : (
+                        <button className="mt-2 px-4 py-1 rounded bg-purple-600 text-white hover:bg-purple-700" onClick={handleSeguir}>
+                          Seguir
+                        </button>
+                      )
                     )
                   )}
                   {errorBoton && (
