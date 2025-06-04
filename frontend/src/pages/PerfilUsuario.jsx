@@ -140,7 +140,7 @@ const PerfilUsuario = () => {
                       </button>
                     ) : (
                       sigue ? (
-                        <button className="mt-2 px-4 py-1 rounded bg-gray-300 text-gray-700 hover:bg-gray-400" onClick={handleDejarSeguir}>
+                        <button className="mt-2 px-4 py-1 rounded bg-red-600 text-white-700 hover:bg-gray-400" onClick={handleDejarSeguir}>
                           Dejar de seguir
                         </button>
                       ) : (
