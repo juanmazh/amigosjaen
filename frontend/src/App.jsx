@@ -17,6 +17,7 @@ import PerfilUsuario from "./pages/PerfilUsuario";
 import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import ChatWidget from "./pages/components/ChatWidget";
+import Valoraciones from "./pages/Valoraciones";
 import './assets/styles/index.css';
 import './assets/styles/App.css';
 
@@ -38,6 +39,7 @@ function App() {
         <Route path="/perfil/:id" element={<PerfilUsuario />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
+        <Route path="/valoraciones" element={<Valoraciones />} />
       </Routes>
       <ChatWidget />
     </>
