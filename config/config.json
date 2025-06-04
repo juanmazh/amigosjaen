@@ -4,7 +4,9 @@
     "password": "root",
     "database": "amigosjaen",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "JWT_SECRET":"secreto_super_seguro"
+
   },
   "test": {
     "username": "root",
@@ -18,6 +20,8 @@
     "password": "IMDYJjbYQW",
     "database": "sql7777209",
     "host": "sql7.freesqldatabase.com",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "JWT_SECRET":"secreto_super_seguro"
+
   }
 }
