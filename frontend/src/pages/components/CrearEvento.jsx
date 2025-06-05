@@ -27,6 +27,7 @@ function CrearEvento({ onEventoCreado }) {
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [fecha, setFecha] = useState("");
+  const [hora, setHora] = useState("");
   const [imagenes, setImagenes] = useState([]);
   const [imagenLinks, setImagenLinks] = useState([""]);
   const [localizacion, setLocalizacion] = useState({ lat: 37.7796, lng: -3.7849 }); // Coordenadas iniciales válidas
@@ -111,14 +112,17 @@ function CrearEvento({ onEventoCreado }) {
       return Swal.fire("Error", "No estás autenticado. Por favor, inicia sesión.", "error");
     }
 
-    if (!titulo || !descripcion || !fecha) {
+    if (!titulo || !descripcion || !fecha || !hora) {
       return Swal.fire("Error", "Todos los campos son obligatorios", "error");
     }
+
+    // Combinar fecha y hora en formato ISO
+    const fechaHora = `${fecha}T${hora}`;
 
     const formData = {
       titulo,
       descripcion,
-      fecha,
+      fecha: fechaHora,
       imagenes: JSON.stringify(imagenLinks.filter((link) => link.trim() !== "")),
       localizacion: typeof localizacion === 'object' ? `${localizacion.lat},${localizacion.lng}` : localizacion,
       etiquetas,
@@ -131,6 +135,7 @@ function CrearEvento({ onEventoCreado }) {
       setTitulo("");
       setDescripcion("");
       setFecha("");
+      setHora("");
       setImagenLinks([""]);
       setEtiquetas([]);
       if (onEventoCreado) onEventoCreado(res.data);
@@ -179,6 +184,12 @@ function CrearEvento({ onEventoCreado }) {
           className="w-full border border-gray-300 rounded px-3 py-2"
           value={fecha}
           onChange={(e) => setFecha(e.target.value)}
+        />
+        <input
+          type="time"
+          className="w-full border border-gray-300 rounded px-3 py-2"
+          value={hora}
+          onChange={(e) => setHora(e.target.value)}
         />
         <input
           type="text"
