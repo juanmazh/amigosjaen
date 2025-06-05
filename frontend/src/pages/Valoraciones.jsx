@@ -3,20 +3,79 @@ import AuthContext from "../context/AuthContext";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import api from "../api";
+import Swal from "sweetalert2";
 
 const Valoraciones = () => {
   const { usuario } = useContext(AuthContext);
   const [eventos, setEventos] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [valoraciones, setValoraciones] = useState({}); // { eventoId: { valor, comentario } }
+  const [enviando, setEnviando] = useState({}); // { eventoId: true/false }
 
   useEffect(() => {
     if (!usuario) return;
     setCargando(true);
     api
       .get(`/usuarios/${usuario.id}/eventos-asistidos`)
-      .then((res) => setEventos(res.data.eventos || []))
+      .then((res) => {
+        setEventos(res.data.eventos || []);
+        // Cargar valoraciones existentes para cada evento
+        (res.data.eventos || []).forEach((evento) => {
+          api
+            .get(`/valoraciones/${evento.id}`, {
+              headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+            })
+            .then((vres) => {
+              if (vres.data.valoracion) {
+                setValoraciones((prev) => ({
+                  ...prev,
+                  [evento.id]: {
+                    valor: vres.data.valoracion.valor,
+                    comentario: vres.data.valoracion.comentario || "",
+                  },
+                }));
+              }
+            });
+        });
+      })
       .finally(() => setCargando(false));
   }, [usuario]);
+
+  const handleValorChange = (eventoId, valor) => {
+    setValoraciones((prev) => ({
+      ...prev,
+      [eventoId]: { ...prev[eventoId], valor },
+    }));
+  };
+
+  const handleComentarioChange = (eventoId, comentario) => {
+    setValoraciones((prev) => ({
+      ...prev,
+      [eventoId]: { ...prev[eventoId], comentario },
+    }));
+  };
+
+  const handleEnviar = async (eventoId) => {
+    const valor = valoraciones[eventoId]?.valor;
+    const comentario = valoraciones[eventoId]?.comentario || "";
+    if (!valor || valor < 1 || valor > 5) {
+      Swal.fire("Error", "Introduce una valoración entre 1 y 5", "error");
+      return;
+    }
+    setEnviando((prev) => ({ ...prev, [eventoId]: true }));
+    try {
+      await api.post(
+        "/valoraciones",
+        { eventoId, valor, comentario },
+        { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } }
+      );
+      Swal.fire("¡Gracias!", "Tu valoración se ha guardado", "success");
+    } catch (err) {
+      Swal.fire("Error", "No se pudo guardar la valoración", "error");
+    } finally {
+      setEnviando((prev) => ({ ...prev, [eventoId]: false }));
+    }
+  };
 
   if (!usuario) {
     return (
@@ -44,12 +103,31 @@ const Valoraciones = () => {
                 <div className="font-semibold text-lg text-purple-800">{evento.titulo}</div>
                 <div className="text-gray-600">{evento.descripcion}</div>
                 <div className="text-sm text-gray-500 mb-2">Finalizado el {evento.fecha?.slice(0, 10)}</div>
-                {/* Aquí irá el formulario de valoración */}
                 <div className="mt-2">
                   <span className="text-gray-700">Valora este evento:</span>
-                  {/* Ejemplo de estrellas o input de valoración */}
-                  <input type="number" min="1" max="5" className="ml-2 border rounded px-2 py-1 w-16" placeholder="1-5" />
-                  <button className="ml-2 bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700">Enviar</button>
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    className="ml-2 border rounded px-2 py-1 w-16"
+                    placeholder="1-5"
+                    value={valoraciones[evento.id]?.valor || ""}
+                    onChange={e => handleValorChange(evento.id, e.target.value)}
+                  />
+                  <button
+                    className="ml-2 bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700 disabled:opacity-60"
+                    onClick={() => handleEnviar(evento.id)}
+                    disabled={enviando[evento.id]}
+                  >
+                    {valoraciones[evento.id]?.valor ? "Actualizar" : "Enviar"}
+                  </button>
+                  <textarea
+                    className="block mt-2 w-full border rounded px-2 py-1"
+                    placeholder="Comentario (opcional)"
+                    value={valoraciones[evento.id]?.comentario || ""}
+                    onChange={e => handleComentarioChange(evento.id, e.target.value)}
+                    rows={2}
+                  />
                 </div>
               </li>
             ))}

@@ -7,6 +7,7 @@ const AsistentesEventos = require('./AsistentesEventos');
 const Comentario = require('./Comentario');
 const Seguidores = require('./Seguidores');
 const MensajeDirecto = require('./MensajeDirecto')(sequelize);
+const Valoracion = require('./Valoracion');
 
 // Definir relaciones
 Usuario.hasMany(Publicacion);
@@ -53,6 +54,12 @@ if (MensajeDirecto.associate) {
   MensajeDirecto.associate({ Usuario });
 }
 
+// Relación Valoracion
+Valoracion.belongsTo(Usuario, { foreignKey: 'usuarioId' });
+Valoracion.belongsTo(Evento, { foreignKey: 'eventoId' });
+Usuario.hasMany(Valoracion, { foreignKey: 'usuarioId' });
+Evento.hasMany(Valoracion, { foreignKey: 'eventoId' });
+
 module.exports = {
   sequelize,
   Usuario,
@@ -63,4 +70,5 @@ module.exports = {
   Comentario,
   Seguidores,
   MensajeDirecto,
+  Valoracion,
 };

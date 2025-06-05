@@ -13,6 +13,7 @@ const etiquetasRoutes = require('./routes/etiquetas');
 const eventosRoutes = require('./routes/eventos');
 const comentariosRouter = require('./routes/comentarios'); // Asegúrate de que la ruta sea correcta
 const mensajesDirectosRoutes = require('./routes/mensajesDirectos');
+const valoracionesRoutes = require('./routes/valoraciones');
 
 const app = express();
 app.use(express.json());
@@ -39,6 +40,7 @@ app.use('/api/etiquetas', etiquetasRoutes);
 app.use('/api/eventos', eventosRoutes);
 app.use('/api/comentarios', comentariosRouter); // Nueva ruta para comentarios
 app.use('/api/mensajes', mensajesDirectosRoutes); // Ruta para mensajes directos
+app.use('/api/valoraciones', valoracionesRoutes); // Ruta para valoraciones de eventos
 
 // Crear servidor HTTP y configurar socket.io
 const server = http.createServer(app);
