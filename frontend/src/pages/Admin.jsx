@@ -174,8 +174,8 @@ function Admin() {
             type="password"
             placeholder="Contraseña"
           />
-          <select id="swal-rol" className="swal2-select" defaultValue={usuarioInicial?.rol || "cliente"}>
-            <option value="cliente">Cliente</option>
+          <select id="swal-rol" className="swal2-select" defaultValue={usuarioInicial?.rol || "usuario"}>
+            <option value="usuario">Usuario</option>
             <option value="admin">Administrador</option>
           </select>
         </div>
@@ -188,7 +188,7 @@ function Admin() {
         const password = document.getElementById("swal-password").value;
         const rol = document.getElementById("swal-rol").value;
 
-        if (!nombre || !email || !password || !rol) {
+        if (!nombre || !email || (!usuarioInicial && !password) || !rol) {
           Swal.showValidationMessage("Todos los campos son obligatorios");
         }
 
@@ -199,6 +199,7 @@ function Admin() {
         const datos = result.value;
         try {
           if (usuarioInicial) {
+            // PUT /usuarios/:id
             const res = await api.put(`/usuarios/${usuarioInicial.id}`, datos, {
               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
@@ -207,6 +208,7 @@ function Admin() {
             );
             Swal.fire("Actualizado", "Usuario actualizado correctamente", "success");
           } else {
+            // POST /usuarios
             const res = await api.post(`/usuarios`, datos, {
               headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
             });
