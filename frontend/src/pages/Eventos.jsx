@@ -32,7 +32,9 @@ function Eventos() {
   const eventosFiltrados = eventos.filter((evento) => {
     const matchesTitulo = evento.titulo.toLowerCase().includes(filtro.toLowerCase());
     const matchesTag = evento.tags && evento.tags.some(tag => tag.nombre.toLowerCase().includes(filtro.toLowerCase()));
-    return matchesTitulo || matchesTag;
+    const fechaHora = evento.fecha ? new Date(evento.fecha).toLocaleString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+    const matchesFechaHora = fechaHora.toLowerCase().includes(filtro.toLowerCase());
+    return matchesTitulo || matchesTag || matchesFechaHora;
   });
 
   return (
@@ -74,7 +76,8 @@ function Eventos() {
               </h2>
               <p>{evento.descripcion}</p>
               <p className="text-sm text-gray-500">
-                {new Date(evento.fecha).toLocaleDateString()}
+                {/* Mostrar fecha y hora en formato local */}
+                {evento.fecha ? new Date(evento.fecha).toLocaleString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}
               </p>
               <p
                 className={`text-sm font-bold ${
