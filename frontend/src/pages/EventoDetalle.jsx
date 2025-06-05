@@ -68,7 +68,7 @@ function EventoDetalle() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-pink-100 to-purple-200">
       <Header />
-      <main className="flex-grow flex justify-center items-center">
+      <main className="flex-grow flex justify-center items-center mt-8 mb-8">
         <div className="bg-white shadow-lg rounded-2xl p-8 max-w-4xl w-full">
           <div className="flex flex-col md:flex-row gap-6">
             {/* Galería de imágenes */}
@@ -281,8 +281,11 @@ function EventoDetalle() {
               {/* Botón de editar evento para el creador o admin */}
               {usuario && (usuario.id === evento.usuarioId || usuario.rol === 'admin') && (
                 <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4 mr-2"
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700 mt-4 w-full"
                   onClick={async () => {
+                    // Obtener fecha y hora actuales del evento
+                    let fechaValor = evento.fecha ? evento.fecha.slice(0,10) : '';
+                    let horaValor = evento.fecha ? new Date(evento.fecha).toISOString().slice(11,16) : '';
                     const { value: formValues } = await Swal.fire({
                       title: 'Editar evento',
                       html:
@@ -291,7 +294,9 @@ function EventoDetalle() {
                         `<label for='swal-descripcion' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Descripción</label>` +
                         `<textarea id="swal-descripcion" class="swal2-textarea" placeholder="Descripción">${evento.descripcion.replace(/</g, '&lt;')}</textarea>` +
                         `<label for='swal-fecha' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Fecha</label>` +
-                        `<input id="swal-fecha" class="swal2-input" type="date" value="${evento.fecha ? evento.fecha.slice(0,10) : ''}" />` +
+                        `<input id="swal-fecha" class="swal2-input" type="date" value="${fechaValor}" />` +
+                        `<label for='swal-hora' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Hora</label>` +
+                        `<input id="swal-hora" class="swal2-input" type="time" value="${horaValor}" />` +
                         `<label for='swal-localizacion' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Localización (dirección o lat,lng)</label>` +
                         `<input id="swal-localizacion" class="swal2-input" placeholder="Calle ejemplo, ciudad" value="${evento.localizacion || ''}" />` +
                         `<label for='swal-etiquetas' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Etiquetas (separadas por coma)</label>` +
@@ -302,13 +307,14 @@ function EventoDetalle() {
                         const titulo = document.getElementById('swal-titulo').value;
                         const descripcion = document.getElementById('swal-descripcion').value;
                         const fecha = document.getElementById('swal-fecha').value;
+                        const hora = document.getElementById('swal-hora').value;
                         const localizacion = document.getElementById('swal-localizacion').value;
                         const etiquetas = document.getElementById('swal-etiquetas').value.split(',').map(e=>e.trim()).filter(Boolean);
-                        if (!titulo || !descripcion || !fecha) {
-                          Swal.showValidationMessage('Título, descripción y fecha son obligatorios');
+                        if (!titulo || !descripcion || !fecha || !hora) {
+                          Swal.showValidationMessage('Título, descripción, fecha y hora son obligatorios');
                           return false;
                         }
-                        return { titulo, descripcion, fecha, localizacion, etiquetas };
+                        return { titulo, descripcion, fecha, hora, localizacion, etiquetas };
                       }
                     });
                     if (formValues) {
@@ -327,9 +333,13 @@ function EventoDetalle() {
                           await Swal.fire('Error', 'No se pudo geocodificar la dirección. Se guardará el texto tal cual.', 'warning');
                         }
                       }
+                      // Combinar fecha y hora y ajustar -2h para compensar la base de datos
+                      let fechaHoraLocal = new Date(`${formValues.fecha}T${formValues.hora}`);
+                      fechaHoraLocal.setHours(fechaHoraLocal.getHours() - 2);
+                      const fechaHora = fechaHoraLocal.toISOString().slice(0, 16);
                       try {
                         const res = await api.put(`/eventos/${evento.id}`,
-                          { ...formValues, localizacion: localizacionFinal },
+                          { ...formValues, fecha: fechaHora, localizacion: localizacionFinal },
                           { headers: { Authorization: `Bearer ${localStorage.getItem('token')}` } }
                         );
                         setEvento(res.data);
