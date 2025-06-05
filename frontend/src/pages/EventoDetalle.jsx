@@ -143,7 +143,7 @@ function EventoDetalle() {
               )}
               {/* Localización en mapa si es válida */}
               {evento.localizacion && (() => {
-                // Intentar extraer lat/lng de la localización
+                // extraer lat/lng de la localización
                 let lat = null, lng = null;
                 if (typeof evento.localizacion === 'string' && evento.localizacion.includes(',')) {
                   const parts = evento.localizacion.split(',');
@@ -352,10 +352,8 @@ function EventoDetalle() {
                           await Swal.fire('Error', 'No se pudo geocodificar la dirección. Se guardará el texto tal cual.', 'warning');
                         }
                       }
-                      // Combinar fecha y hora y ajustar -2h para compensar la base de datos
-                      let fechaHoraLocal = new Date(`${formValues.fecha}T${formValues.hora}`);
-                      fechaHoraLocal.setHours(fechaHoraLocal.getHours() - 2);
-                      const fechaHora = fechaHoraLocal.toISOString().slice(0, 16);
+                      // Combinar fecha y hora SIN ajustar -2h
+                      const fechaHora = new Date(`${formValues.fecha}T${formValues.hora}`).toISOString().slice(0, 16);
                       try {
                         const res = await api.put(`/eventos/${evento.id}`,
                           { ...formValues, fecha: fechaHora, localizacion: localizacionFinal },
