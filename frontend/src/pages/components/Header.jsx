@@ -31,6 +31,15 @@ function Header() {
       </button>
       {/* Menú normal en escritorio */}
       <div className="hidden md:flex justify-center items-center space-x-4">
+        {/* Botón admin solo para administradores */}
+        {usuario && usuario.rol === 'admin' && (
+          <button
+            onClick={() => navigate('/admin')}
+            className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-green-400 to-green-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-green-500 hover:to-green-700 hover:shadow-lg transition-all duration-300"
+          >
+            Admin
+          </button>
+        )}
         <button
           onClick={() => navigate('/foro')}
           className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300"
@@ -65,6 +74,15 @@ function Header() {
       {/* Menú móvil desplegable */}
       {menuOpen && (
         <div className="absolute top-16 left-0 w-full bg-white shadow-lg rounded-b-2xl flex flex-col items-center z-50 md:hidden animate-fade-in">
+          {/* Botón admin solo para administradores en móvil */}
+          {usuario && usuario.rol === 'admin' && (
+            <button
+              onClick={() => { navigate('/admin'); setMenuOpen(false); }}
+              className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-green-400 to-green-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-green-500 hover:to-green-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1"
+            >
+              Admin
+            </button>
+          )}
           <button
             onClick={() => { navigate('/foro'); setMenuOpen(false); }}
             className="inline-flex items-center gap-2 rounded-lg border border-stroke bg-gradient-to-r from-purple-400 to-purple-600 text-white px-4 py-2 text-base font-medium shadow-md hover:from-purple-500 hover:to-purple-700 hover:shadow-lg transition-all duration-300 w-11/12 my-1"
