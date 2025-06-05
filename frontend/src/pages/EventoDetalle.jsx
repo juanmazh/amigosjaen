@@ -45,6 +45,17 @@ function EventoDetalle() {
     }
   };
 
+  const desapuntarse = async () => {
+    try {
+      await api.delete(`/eventos/${id}/asistir`);
+      Swal.fire("Desapuntado", "Te has desapuntado del evento", "success");
+      setYaInscrito(false);
+      setAsistentes(prev => prev.filter(a => a.id !== usuario.id));
+    } catch (err) {
+      Swal.fire("Error", err.response?.data?.error || "No se pudo desapuntar", "error");
+    }
+  };
+
   // Calcular estado del evento
   let estadoEvento = "";
   if (evento && evento.fecha) {
@@ -232,8 +243,8 @@ function EventoDetalle() {
                   </button>
                 )}
               </div>
-              {/* Botón inscribirse */}
-              {usuario && !yaInscrito && (
+              {/* Botón inscribirse o desapuntarse */}
+              {usuario && estadoEvento !== 'Finalizado' && !yaInscrito && (
                 <button
                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 mt-2"
                   onClick={inscribirse}
@@ -241,11 +252,19 @@ function EventoDetalle() {
                   Inscribirse al evento
                 </button>
               )}
+              {usuario && estadoEvento !== 'Finalizado' && yaInscrito && (
+                <div className="flex flex-col gap-2 mt-2">
+                  <div className="text-green-700 font-semibold">Ya estás inscrito en este evento</div>
+                  <button
+                    className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+                    onClick={desapuntarse}
+                  >
+                    Desapuntarse
+                  </button>
+                </div>
+              )}
               {!usuario && (
                 <div className="text-yellow-700 font-semibold mt-2">Inicia sesión para inscribirte al evento</div>
-              )}
-              {usuario && yaInscrito && (
-                <div className="text-green-700 font-semibold mt-2">Ya estás inscrito en este evento</div>
               )}
               {/* Botón de borrar si el usuario es el autor */}
               {usuario && usuario.id === evento.usuarioId && (
