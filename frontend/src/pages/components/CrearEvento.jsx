@@ -116,8 +116,10 @@ function CrearEvento({ onEventoCreado }) {
       return Swal.fire("Error", "Todos los campos son obligatorios", "error");
     }
 
-    // Combinar fecha y hora en formato ISO
-    const fechaHora = `${fecha}T${hora}`;
+    // Combinar fecha y hora en formato ISO y ajustar -2 horas para compensar el desfase de la base de datos
+    let fechaHoraLocal = new Date(`${fecha}T${hora}`);
+    fechaHoraLocal.setHours(fechaHoraLocal.getHours() - 2);
+    const fechaHora = fechaHoraLocal.toISOString().slice(0, 16); // formato 'YYYY-MM-DDTHH:mm'
 
     const formData = {
       titulo,
