@@ -118,7 +118,7 @@ function CrearEvento({ onEventoCreado }) {
 
     // Combinar fecha y hora en formato ISO y ajustar -2 horas para compensar el desfase de la base de datos
     let fechaHoraLocal = new Date(`${fecha}T${hora}`);
-    fechaHoraLocal.setHours(fechaHoraLocal.getHours() - 2);
+    fechaHoraLocal.setHours(fechaHoraLocal.getHours());
     const fechaHora = fechaHoraLocal.toISOString().slice(0, 16); // formato 'YYYY-MM-DDTHH:mm'
 
     const formData = {
