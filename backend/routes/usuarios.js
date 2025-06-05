@@ -270,4 +270,39 @@ router.get('/:id/eventos-asistidos', async (req, res) => {
   }
 });
 
+// Obtener eventos finalizados creados por el usuario y su media de valoraciones
+router.get('/:id/eventos-finalizados-creados', async (req, res) => {
+  try {
+    const { Evento, Valoracion } = require('../models');
+    const eventos = await Evento.findAll({
+      where: {
+        usuarioId: req.params.id,
+        fecha: { [require('sequelize').Op.lt]: new Date() },
+        activo: true,
+      },
+      order: [['fecha', 'DESC']],
+    });
+    // Para cada evento, calcular la media de valoraciones
+    const eventosConMedia = await Promise.all(eventos.map(async (evento) => {
+      const valoraciones = await Valoracion.findAll({ where: { eventoId: evento.id } });
+      let media = null;
+      if (valoraciones.length > 0) {
+        media = valoraciones.reduce((acc, v) => acc + v.valor, 0) / valoraciones.length;
+        media = Math.round(media * 100) / 100;
+      }
+      return {
+        id: evento.id,
+        titulo: evento.titulo,
+        descripcion: evento.descripcion,
+        fecha: evento.fecha,
+        mediaValoracion: media,
+        totalValoraciones: valoraciones.length,
+      };
+    }));
+    res.json({ eventos: eventosConMedia });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error al obtener eventos finalizados creados' });
+  }
+});
+
 module.exports = router;

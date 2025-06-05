@@ -19,6 +19,8 @@ const PerfilUsuario = () => {
   const [cargandoLista, setCargandoLista] = useState(false);
   const [cargandoBoton, setCargandoBoton] = useState(false);
   const [errorBoton, setErrorBoton] = useState("");
+  const [eventosFinalizados, setEventosFinalizados] = useState([]);
+  const [cargandoEventosFinalizados, setCargandoEventosFinalizados] = useState(true);
 
   useEffect(() => {
     api.get(`/usuarios/${id}`)
@@ -88,6 +90,13 @@ const PerfilUsuario = () => {
     setModalAbierto(false);
     setListaSeguidores([]);
   };
+
+  useEffect(() => {
+    setCargandoEventosFinalizados(true);
+    api.get(`/usuarios/${id}/eventos-finalizados-creados`)
+      .then(res => setEventosFinalizados(res.data.eventos || []))
+      .finally(() => setCargandoEventosFinalizados(false));
+  }, [id]);
 
   let fechaAlta = "";
   if (usuario && usuario.createdAt) {
@@ -167,6 +176,29 @@ const PerfilUsuario = () => {
           )}
         </div>
         {usuario && <PerfilSecciones usuario={usuario} editable={false} />}
+        {usuario && (
+          <div className="mt-8">
+            <h3 className="text-xl font-bold text-purple-700 mb-4">Eventos finalizados creados</h3>
+            {cargandoEventosFinalizados ? (
+              <div>Cargando eventos...</div>
+            ) : eventosFinalizados.length === 0 ? (
+              <div>No hay eventos finalizados creados por este usuario.</div>
+            ) : (
+              <ul className="space-y-4">
+                {eventosFinalizados.map(ev => (
+                  <li key={ev.id} className="border rounded-lg p-4 bg-purple-50">
+                    <div className="font-semibold text-lg text-purple-800">{ev.titulo}</div>
+                    <div className="text-gray-600">{ev.descripcion}</div>
+                    <div className="text-sm text-gray-500 mb-2">Finalizado el {ev.fecha?.slice(0, 10)}</div>
+                    <div className="text-gray-700 font-semibold">
+                      Media valoraciones: {ev.mediaValoracion !== null ? ev.mediaValoracion + ` (${ev.totalValoraciones} valoraciones)` : "Sin valoraciones"}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </main>
       <Footer />
 
