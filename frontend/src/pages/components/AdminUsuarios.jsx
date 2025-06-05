@@ -21,7 +21,38 @@ const AdminUsuarios = ({ usuarios, abrirFormularioUsuario, eliminarUsuario }) =>
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-center space-x-2">
               <button
-                onClick={() => abrirFormularioUsuario(u)}
+                onClick={() => {
+                  // Modal para editar usuario con selección de rol
+                  window.Swal.fire({
+                    title: `Editar usuario: ${u.nombre}`,
+                    html:
+                      `<label for='swal-nombre' style='display:block;text-align:left;font-weight:600;margin-bottom:2px;'>Nombre</label>` +
+                      `<input id="swal-nombre" class="swal2-input" placeholder="Nombre" value="${u.nombre.replace(/"/g, '&quot;')}" />` +
+                      `<label for='swal-email' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Email</label>` +
+                      `<input id="swal-email" class="swal2-input" placeholder="Email" value="${u.email.replace(/"/g, '&quot;')}" />` +
+                      `<label for='swal-rol' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Rol</label>` +
+                      `<select id="swal-rol" class="swal2-input">
+                        <option value="usuario" ${u.rol === 'usuario' ? 'selected' : ''}>Usuario</option>
+                        <option value="admin" ${u.rol === 'admin' ? 'selected' : ''}>Administrador</option>
+                      </select>`,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    preConfirm: () => {
+                      const nombre = document.getElementById('swal-nombre').value;
+                      const email = document.getElementById('swal-email').value;
+                      const rol = document.getElementById('swal-rol').value;
+                      if (!nombre || !email || !rol) {
+                        window.Swal.showValidationMessage('Todos los campos son obligatorios');
+                        return false;
+                      }
+                      return { nombre, email, rol };
+                    }
+                  }).then(async (result) => {
+                    if (result.isConfirmed && result.value) {
+                      await abrirFormularioUsuario({ ...u, ...result.value });
+                    }
+                  });
+                }}
                 className="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm shadow transition-all duration-200"
               >
                 <span className="material-icons text-base mr-1">Editar</span>

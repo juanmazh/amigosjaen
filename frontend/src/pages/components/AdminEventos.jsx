@@ -20,7 +20,7 @@ const AdminEventos = ({ eventos, asistentesEventos, abrirFormularioEvento, elimi
           <tr key={e.id} className={idx % 2 === 0 ? "bg-gray-50 hover:bg-emerald-50 transition" : "bg-white hover:bg-emerald-50 transition"}>
             <td className="px-6 py-4 whitespace-nowrap">{e.titulo}</td>
             <td className="px-6 py-4 whitespace-nowrap max-w-xs truncate">{e.descripcion}</td>
-            <td className="px-6 py-4 whitespace-nowrap">{e.fecha ? e.fecha.slice(0,10) : ''}</td>
+            <td className="px-6 py-4 whitespace-nowrap">{e.fecha ? new Date(e.fecha).toLocaleString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : ''}</td>
             <td className="px-6 py-4 whitespace-nowrap text-center">
               <span className="inline-block bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-semibold">{asistentesEventos[e.id]?.length || 0}</span>
               {asistentesEventos[e.id]?.length > 0 && (
@@ -40,7 +40,45 @@ const AdminEventos = ({ eventos, asistentesEventos, abrirFormularioEvento, elimi
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-center space-x-2">
               <button
-                onClick={() => abrirFormularioEvento(e)}
+                onClick={() => {
+                  // Modal de edición con fecha y hora
+                  const fechaValor = e.fecha ? e.fecha.slice(0,10) : '';
+                  const horaValor = e.fecha ? new Date(e.fecha).toISOString().slice(11,16) : '';
+                  MySwal.fire({
+                    title: `Editar evento: ${e.titulo}`,
+                    html:
+                      `<label for='swal-titulo' style='display:block;text-align:left;font-weight:600;margin-bottom:2px;'>Título</label>` +
+                      `<input id="swal-titulo" class="swal2-input" placeholder="Título" value="${e.titulo.replace(/"/g, '&quot;')}" />` +
+                      `<label for='swal-descripcion' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Descripción</label>` +
+                      `<textarea id="swal-descripcion" class="swal2-textarea" placeholder="Descripción">${e.descripcion.replace(/</g, '&lt;')}</textarea>` +
+                      `<label for='swal-fecha' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Fecha</label>` +
+                      `<input id="swal-fecha" class="swal2-input" type="date" value="${fechaValor}" />` +
+                      `<label for='swal-hora' style='display:block;text-align:left;font-weight:600;margin:8px 0 2px 0;'>Hora</label>` +
+                      `<input id="swal-hora" class="swal2-input" type="time" value="${horaValor}" />`,
+                    focusConfirm: false,
+                    showCancelButton: true,
+                    preConfirm: () => {
+                      const titulo = document.getElementById('swal-titulo').value;
+                      const descripcion = document.getElementById('swal-descripcion').value;
+                      const fecha = document.getElementById('swal-fecha').value;
+                      const hora = document.getElementById('swal-hora').value;
+                      if (!titulo || !descripcion || !fecha || !hora) {
+                        MySwal.showValidationMessage('Todos los campos son obligatorios');
+                        return false;
+                      }
+                      // Combinar fecha y hora en formato ISO (ajustar si tu backend lo requiere)
+                      let fechaHoraLocal = new Date(`${fecha}T${hora}`);
+                      fechaHoraLocal.setHours(fechaHoraLocal.getHours());
+                      const fechaHora = fechaHoraLocal.toISOString().slice(0, 16);
+                      return { titulo, descripcion, fecha: fechaHora };
+                    }
+                  }).then(async (result) => {
+                    if (result.isConfirmed && result.value) {
+                      // Aquí deberías llamar a tu función de actualización de evento
+                      await abrirFormularioEvento({ ...e, ...result.value });
+                    }
+                  });
+                }}
                 className="inline-flex items-center bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-sm shadow transition-all duration-200"
               >
                 <span className="material-icons text-base mr-1">Editar</span>

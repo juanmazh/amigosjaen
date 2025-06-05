@@ -7,7 +7,7 @@ export default function Privacy() {
       <p className="mb-2">En AmigosJaen valoramos tu privacidad. Esta página describe cómo recopilamos, usamos y protegemos tu información personal.</p>
       <h2 className="text-xl font-semibold mt-6 mb-2">¿Qué datos recopilamos?</h2>
       <ul className="list-disc ml-6 mb-2">
-        <li>Nombre, correo electrónico y contraseña al registrarte.</li>
+        <li>Nombre, correo electrónico y contraseña totalmente cifrada al registrarte.</li>
         <li>Información de tus publicaciones, eventos y comentarios.</li>
         <li>Datos de uso y navegación en la plataforma.</li>
       </ul>
