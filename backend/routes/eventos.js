@@ -27,4 +27,21 @@ router.delete('/:id/asistentes/:usuarioId', verificarToken, eliminarAsistente);
 // Actualizar un evento (dueño o admin)
 router.put('/:id', verificarToken, updateEvento);
 
+// Eliminar inscripción del usuario logueado a un evento
+router.delete('/:id/asistir', verificarToken, async (req, res) => {
+  try {
+    const eventoId = req.params.id;
+    const usuarioId = req.usuario.id;
+    const AsistentesEventos = require('../models/AsistentesEventos');
+    const deleted = await AsistentesEventos.destroy({ where: { eventoId, usuarioId } });
+    if (deleted) {
+      res.json({ message: 'Desapuntado correctamente' });
+    } else {
+      res.status(404).json({ error: 'No estabas inscrito en este evento' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: 'Error al desapuntarse del evento' });
+  }
+});
+
 module.exports = router;
