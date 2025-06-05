@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../../api";
 import AuthContext from "../../context/AuthContext";
 
-const PerfilSecciones = ({ usuario, mostrarEventosPorEstado }) => {
+const PerfilSecciones = ({ usuario, mostrarEventosPorEstado, eventosFinalizadosCreados, cargandoEventosFinalizados }) => {
   // Descripción editable
   const [descripcion, setDescripcion] = useState("");
   const [editando, setEditando] = useState(false);
@@ -116,6 +116,30 @@ const PerfilSecciones = ({ usuario, mostrarEventosPorEstado }) => {
           </ul>
         )}
       </div>
+      {/* Eventos finalizados creados */}
+      {typeof eventosFinalizadosCreados !== 'undefined' && (
+        <div className="bg-white rounded-xl shadow p-6">
+          <h3 className="text-xl font-bold text-purple-700 mb-2">Eventos finalizados creados</h3>
+          {cargandoEventosFinalizados ? (
+            <div className="text-gray-500">Cargando eventos...</div>
+          ) : eventosFinalizadosCreados.length === 0 ? (
+            <div className="text-gray-500">No hay eventos finalizados creados por este usuario.</div>
+          ) : (
+            <ul className="list-disc pl-5">
+              {eventosFinalizadosCreados.map(ev => (
+                <li key={ev.id} className="mb-3">
+                  <div className="font-semibold text-purple-800 text-base">{ev.titulo}</div>
+                  <div className="text-gray-600 text-sm mb-1">{ev.descripcion}</div>
+                  <div className="text-xs text-gray-500 mb-1">Finalizado el {ev.fecha?.slice(0, 10)}</div>
+                  <div className="text-gray-700 font-semibold text-sm">
+                    Media valoraciones: {ev.mediaValoracion !== null ? ev.mediaValoracion + ` (${ev.totalValoraciones} valoraciones)` : "Sin valoraciones"}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
       {/* Eventos apuntado */}
       <div className="bg-white rounded-xl shadow p-6">
         <h3 className="text-xl font-bold text-purple-700 mb-2">Eventos a los que estás apuntado</h3>
