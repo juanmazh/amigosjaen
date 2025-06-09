@@ -46,7 +46,7 @@ export default function UserMenu({ usuario }) {
 
     if (res.isConfirmed) {
       logout();
-      navigate("/");
+      navigate("/login");
     }
   };
 
