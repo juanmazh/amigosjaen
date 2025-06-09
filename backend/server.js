@@ -19,7 +19,6 @@ const valoracionesRoutes = require('./routes/valoraciones');
 const app = express();
 app.use(express.json());
 
-// Puerto (debe ir antes de server.listen)
 const PORT = process.env.PORT || 5000;
 
 // Configuración de CORS mejorada
