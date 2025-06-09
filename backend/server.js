@@ -18,16 +18,28 @@ const valoracionesRoutes = require('./routes/valoraciones');
 
 const app = express();
 app.use(express.json());
-// Mover la configuración de CORS ANTES de las rutas y de cualquier otro middleware
+
+// Configuración de CORS mejorada
+const allowedOrigins = [
+  'http://localhost:5173', // Frontend local
+  'https://amigosjaen.netlify.app', // Frontend producción
+  'https://amigosjaen.onrender.com', // Backend (por si usas Swagger o pruebas desde aquí)
+];
 app.use(cors({
-  origin: [
-    'http://localhost:5173', // Frontend en desarrollo
-    'https://amigosjaen.netlify.app', // Frontend en producción
-    'https://amigosjaen.onrender.com', // Backend en producción (Render)
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true, // Permitir envío de cookies o credenciales
+  origin: function (origin, callback) {
+    // Permitir peticiones sin origen (como Postman) o si está en la lista
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200,
 }));
+
 // Ruta de prueba
 app.get('/', (req, res) => res.send('API funcionando'));
 
