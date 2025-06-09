@@ -1,3 +1,4 @@
+//rutas para manejar mensajes directos entre usuarios
 const express = require('express');
 const router = express.Router();
 const mensajeDirectoController = require('../controllers/mensajeDirectoController');

@@ -26,7 +26,7 @@ exports.guardarValoracion = async (req, res) => {
   }
 };
 
-// Obtener la valoración de un usuario para un evento
+// Obtener la valoración de un usuario para un evento 
 exports.obtenerValoracion = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;

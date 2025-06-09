@@ -1,3 +1,4 @@
+//rutas de etiquetas
 const express = require('express');
 const router = express.Router();
 const Etiqueta = require('../models/Etiqueta');

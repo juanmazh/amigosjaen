@@ -1,3 +1,4 @@
+//rutas para manejar lo que pueden hacer los usuarios en la aplicación
 const express = require('express');
 const bcrypt = require('bcryptjs'); // Usar bcryptjs en vez de bcrypt
 const router = express.Router();

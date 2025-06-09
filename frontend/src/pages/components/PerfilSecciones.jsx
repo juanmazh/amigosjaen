@@ -14,7 +14,7 @@ const PerfilSecciones = ({ usuario, mostrarEventosPorEstado, eventosFinalizadosC
 
   useEffect(() => {
     if (!usuario) return;
-    // Cargar publicaciones del usuario (siempre, sea quien sea)
+    // Cargar publicaciones del usuario 
     api.get(`/publicaciones?usuarioId=${usuario.id}`)
       .then(res => setPublicaciones(res.data))
       .catch(() => setPublicaciones([]));
@@ -26,7 +26,7 @@ const PerfilSecciones = ({ usuario, mostrarEventosPorEstado, eventosFinalizadosC
     api.get(`/usuarios/${usuario.id}/eventos-pasados`)
       .then(res => setEventosPasados(res.data))
       .catch(() => setEventosPasados([]));
-    // Cargar descripción si existe (puedes guardar en backend o localStorage)
+    // Cargar descripción si tuviera
     const desc = localStorage.getItem(`desc_${usuario.id}`) || "";
     setDescripcion(desc);
   }, [usuario, usuarioLogueado]);
@@ -142,7 +142,7 @@ const PerfilSecciones = ({ usuario, mostrarEventosPorEstado, eventosFinalizadosC
       )}
       {/* Eventos apuntado */}
       <div className="bg-white rounded-xl shadow p-6">
-        <h3 className="text-xl font-bold text-purple-700 mb-2">Eventos a los que estás apuntado</h3>
+        <h3 className="text-xl font-bold text-purple-700 mb-2">Eventos por llegar</h3>
         {mostrarEventosPorEstado ? (
           <>
             {eventosHoy.length > 0 && (
@@ -171,12 +171,12 @@ const PerfilSecciones = ({ usuario, mostrarEventosPorEstado, eventosFinalizadosC
               </div>
             )}
             {eventosHoy.length === 0 && eventosFuturos.length === 0 && (
-              <p className="text-gray-500">No estás inscrito en ningún evento.</p>
+              <p className="text-gray-500">No está inscrito en ningún evento.</p>
             )}
           </>
         ) : (
           eventosNoPasados.length === 0 ? (
-            <p className="text-gray-500">No estás inscrito en ningún evento.</p>
+            <p className="text-gray-500">No está inscrito en ningún evento.</p>
           ) : (
             <ul className="list-disc pl-5">
               {eventosNoPasados.map(ev => (
@@ -193,7 +193,7 @@ const PerfilSecciones = ({ usuario, mostrarEventosPorEstado, eventosFinalizadosC
       <div className="bg-white rounded-xl shadow p-6">
         <h3 className="text-xl font-bold text-purple-700 mb-2">Eventos pasados</h3>
         {eventosPasadosFiltrados.length === 0 ? (
-          <p className="text-gray-500">No has asistido a eventos pasados.</p>
+          <p className="text-gray-500">No ha asistido a eventos pasados.</p>
         ) : (
           <ul className="list-disc pl-5">
             {eventosPasadosFiltrados.map(ev => (

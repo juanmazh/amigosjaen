@@ -1,3 +1,4 @@
+//modelo para la tabla AsistentesEventos
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 

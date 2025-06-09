@@ -1,3 +1,4 @@
+//El core del servidor de la API de Amigos Jaén
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -88,13 +89,13 @@ io.on('connection', (socket) => {
     const destinatarioSocketId = usuariosConectados.get(destinatarioId);
     if (destinatarioSocketId) {
       io.to(destinatarioSocketId).emit('nuevoMensaje', mensaje);
-      // (Opcional) Emitir notificación
+      //  Emitir notificación
       io.to(destinatarioSocketId).emit('notificacion', {
         tipo: 'mensaje',
         mensaje: `Nuevo mensaje de usuario ${remitenteId}`
       });
     }
-    // (Opcional) Confirmar al remitente
+    //  Confirmar al remitente
     socket.emit('mensajeEnviado', mensaje);
   });
 
@@ -112,7 +113,6 @@ sequelize.sync({ force: false }).then(async () => {
   
   // Inspeccionar métodos del modelo Publicacion
   const publicacion = await Publicacion.build();
-  console.log('Métodos disponibles en Publicacion:', Object.keys(publicacion.__proto__));
 
   // Continuar con el servidor
   server.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));

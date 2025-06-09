@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Usuario = require('../models/Usuario');
 require('dotenv').config(); 
-const JWT_SECRET = process.env.JWT_SECRET; // acceder al secreto JWT
+const JWT_SECRET = process.env.JWT_SECRET; // clave secreta para firmar los tokens
 
 // Función REGISTER
 exports.register = async (req, res) => {
@@ -29,7 +29,7 @@ exports.register = async (req, res) => {
       nombre,
       email,
       contraseña: contraseñaHasheada,
-      rol: rol || 'usuario',  // es 'usuario' si no se pasa un rol
+      rol: rol || 'usuario',  // es 'usuario' siempre
     });
 
     // Crear el token JWT
@@ -99,7 +99,7 @@ exports.login = async (req, res) => {
 exports.obtenerUsuario = async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.usuarioId, {
-      attributes: ['id', 'nombre', 'email', 'rol', 'createdAt'] // ahora incluye createdAt
+      attributes: ['id', 'nombre', 'email', 'rol', 'createdAt'] 
     });
 
     if (!usuario) {

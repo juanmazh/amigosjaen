@@ -1,3 +1,4 @@
+//rutas de eventos
 const express = require("express");
 const router = express.Router();
 const { crearEvento, listarEventos, listarEventoPorId, eliminarEvento, inscribirAsistente, obtenerAsistentes, eliminarAsistente, updateEvento } = require("../controllers/eventoController");

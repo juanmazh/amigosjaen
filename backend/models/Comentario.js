@@ -1,3 +1,4 @@
+//modelo para la tabla comentarios
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 

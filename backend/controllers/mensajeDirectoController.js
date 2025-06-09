@@ -5,13 +5,13 @@ const { Op } = require('sequelize');
 exports.enviarMensaje = async (req, res) => {
   try {
     const { destinatarioId, contenido } = req.body;
-    const remitenteId = req.usuario.id; // Asume que el middleware de autenticación añade el usuario
+    const remitenteId = req.usuario.id;
 
     if (!destinatarioId || !contenido) {
       return res.status(400).json({ error: 'Faltan datos requeridos.' });
     }
 
-    // Verifica que el destinatario exista
+    // Verifica que el usuario destinatario existe
     const destinatario = await Usuario.findByPk(destinatarioId);
     if (!destinatario) {
       return res.status(404).json({ error: 'Destinatario no encontrado.' });
@@ -24,16 +24,13 @@ exports.enviarMensaje = async (req, res) => {
       contenido,
       leido: false,
     });
-
-    // (Opcional) Aquí puedes emitir un evento de socket.io para notificar al destinatario
-
     res.status(201).json(mensaje);
   } catch (error) {
     res.status(500).json({ error: 'Error al enviar el mensaje.' });
   }
 };
 
-// Obtener historial de mensajes entre dos usuarios
+// Obtener historial de mensajes entre dos usuarios, logs de chat
 exports.obtenerHistorial = async (req, res) => {
   try {
     const usuarioId = req.usuario.id;

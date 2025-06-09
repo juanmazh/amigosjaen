@@ -1,3 +1,4 @@
+//Ruta para manejar publicaciones y etiquetas
 const express = require('express');
 const router = express.Router();
 const { Publicacion, Usuario, Etiqueta } = require('../models');

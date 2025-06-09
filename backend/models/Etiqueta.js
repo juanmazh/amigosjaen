@@ -1,3 +1,4 @@
+//modelo para la tabla etiqueta
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 const Publicacion = require('./Publicacion');

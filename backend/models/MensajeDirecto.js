@@ -1,3 +1,4 @@
+//modelo para la tabla mensajes directos
 const { DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
@@ -37,7 +38,7 @@ module.exports = (sequelize) => {
     tableName: 'MensajesDirectos',
   });
 
-  // Relaciones (si usas asociaciones en index.js)
+  // Relaciones
   MensajeDirecto.associate = (models) => {
     MensajeDirecto.belongsTo(models.Usuario, { as: 'remitente', foreignKey: 'remitenteId' });
     MensajeDirecto.belongsTo(models.Usuario, { as: 'destinatario', foreignKey: 'destinatarioId' });

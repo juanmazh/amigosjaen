@@ -1,3 +1,4 @@
+//ruta exclusive para administradores
 function soloAdmin(req, res, next) {
     if (req.usuario && req.usuario.rol === 'admin') {
       next();

@@ -1,3 +1,4 @@
+//modelo para la tabla eventos
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
@@ -24,7 +25,7 @@ const Evento = sequelize.define("Evento", {
     defaultValue: 0,
   },
   imagenes: {
-    type: DataTypes.TEXT, // Cambiado de JSON a TEXT para compatibilidad
+    type: DataTypes.TEXT, // Cambiado de JSON a TEXT para compatibilidad, porque Sequelize no maneja JSON directamente
     allowNull: true,
   },
   activo: {
@@ -32,7 +33,7 @@ const Evento = sequelize.define("Evento", {
     defaultValue: 1, // Cambiado de true a 1
   },
   localizacion: {
-    type: DataTypes.STRING, // Puede ser dirección o coordenadas
+    type: DataTypes.STRING, // Puede ser dirección o coordenadas, Se maneja en su función
     allowNull: true,
   },
   usuarioId: {
@@ -40,7 +41,4 @@ const Evento = sequelize.define("Evento", {
     allowNull: false,
   },
 });
-
-// Elimino las relaciones directas para evitar referencias circulares, ahora están en models/index.js
-
 module.exports = Evento;

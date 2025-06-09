@@ -1,4 +1,4 @@
-// backend/models/Usuario.js
+//modelo para la tabla usuarios
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 //Datos que son relevantes al usuario

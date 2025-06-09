@@ -9,7 +9,7 @@ const Seguidores = require('./Seguidores');
 const MensajeDirecto = require('./MensajeDirecto')(sequelize);
 const Valoracion = require('./Valoracion');
 
-// Definir relaciones
+// Definir relaciones de modelos
 Usuario.hasMany(Publicacion);
 Publicacion.belongsTo(Usuario);
 Publicacion.belongsToMany(Etiqueta, { through: 'PublicacionEtiquetas', as: 'tags', foreignKey: 'PublicacionId', otherKey: 'EtiquetaId' });

@@ -1,3 +1,4 @@
+//modelo para la tabla seguidores
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 

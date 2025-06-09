@@ -1,3 +1,4 @@
+//rutas de comentarios
 const express = require('express');
 const router = express.Router();
 const { Comentario, Publicacion, Usuario } = require('../models');

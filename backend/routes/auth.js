@@ -1,3 +1,4 @@
+//rutas para autenticación de usuarios
 const express = require("express");
 const authMiddleware = require("../middleware/auth.js"); // para verificar el token
 const authController = require('../controllers/authController');

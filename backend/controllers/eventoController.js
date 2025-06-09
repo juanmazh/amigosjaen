@@ -14,7 +14,7 @@ const crearEvento = async (req, res) => {
       descripcion,
       fecha,
       imagenes,
-      localizacion, // Guardar localización
+      localizacion, 
       usuarioId,
     }, { transaction: t });
 
@@ -61,7 +61,7 @@ const listarEventos = async (req, res) => {
     const eventos = await Evento.findAll({
       where: {
         activo: true,
-        fecha: { [Op.gte]: hoy }, // Incluye hoy y futuros
+        fecha: { [Op.gte]: hoy }, // Incluye hoy y futuros, importante para no mostrar eventos pasados
       },
       include: [{ model: Etiqueta, as: "eventosTags" }],
       order: [["fecha", "ASC"]],
@@ -95,7 +95,7 @@ const actualizarEstadoEventos = async (req, res) => {
   }
 };
 
-// Obtener detalles de un evento específico (con etiquetas)
+// Obtener detalles de un evento concreto (con etiquetas)
 const listarEventoPorId = async (req, res) => {
   try {
     const { id } = req.params;
@@ -170,7 +170,7 @@ const obtenerAsistentes = async (req, res) => {
 // Eliminar un asistente de un evento (solo el creador puede)
 const eliminarAsistente = async (req, res) => {
   try {
-    const { id, usuarioId } = req.params; // id = eventoId
+    const { id, usuarioId } = req.params; // id eventoId
     // Verificar que el usuario autenticado es el creador del evento
     const evento = await Evento.findByPk(id);
     if (!evento) {

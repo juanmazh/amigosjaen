@@ -1,3 +1,4 @@
+//Comprobar si el token JWT es válido y extraer la información del usuario
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET;
 

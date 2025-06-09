@@ -1,3 +1,4 @@
+//ruta para manejar valoraciones de eventos
 const express = require('express');
 const router = express.Router();
 const verificarToken = require('../middleware/verificarToken');
