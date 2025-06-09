@@ -12,7 +12,7 @@ const usuariosRoutes = require('./routes/usuarios');
 const publicacionesRoutes = require('./routes/publicaciones');
 const etiquetasRoutes = require('./routes/etiquetas');
 const eventosRoutes = require('./routes/eventos');
-const comentariosRouter = require('./routes/comentarios'); // Asegúrate de que la ruta sea correcta
+const comentariosRouter = require('./routes/comentarios'); 
 const mensajesDirectosRoutes = require('./routes/mensajesDirectos');
 const valoracionesRoutes = require('./routes/valoraciones');
 
@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
   'http://localhost:5173', // Frontend local
   'https://amigosjaen.netlify.app', // Frontend producción
-  'https://amigosjaen.onrender.com', // Backend (por si usas Swagger o pruebas desde aquí)
+  'https://amigosjaen.onrender.com', // Backend producción
 ];
 app.use(cors({
   origin: function (origin, callback) {

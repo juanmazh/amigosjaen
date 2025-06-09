@@ -36,19 +36,19 @@ const PerfilUsuario = () => {
     setCargandoSeg(true);
     api.get(`/usuarios/${id}/seguidores`)
       .then(res => {
-        // Si el usuario logueado es el mismo que el perfil, nunca puede seguirse a sí mismo
-        if (usuarioLog && usuarioLog.id === Number(id)) {
-          setSigue(false);
-        } else {
-          setSigue(res.data.sigue);
-        }
         setSeguidores(res.data.seguidores);
+        // Solo actualizar "sigue" si hay usuario logueado
+        if (usuarioLog && usuarioLog.id !== Number(id)) {
+          setSigue(res.data.sigue);
+        } else {
+          setSigue(false);
+        }
       })
       .finally(() => setCargandoSeg(false));
   };
 
   useEffect(() => {
-    if (!id || cargandoAuth || !usuarioLog) return;
+    if (!id || cargandoAuth) return;
     cargarSeguidores();
   }, [id, usuarioLog, cargandoAuth]); 
   const handleSeguir = async () => {
