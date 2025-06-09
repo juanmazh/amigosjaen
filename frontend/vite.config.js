@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    //No funciona HMR, no se porque, pero no afecta al desarrollo demasiado
     server: {
       hmr: true
     },

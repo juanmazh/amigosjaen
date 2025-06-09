@@ -3,8 +3,8 @@ import { io } from 'socket.io-client';
 import { FaComments, FaArrowLeft, FaUserPlus, FaListUl, FaComment } from 'react-icons/fa';
 import AuthContext from '../../context/AuthContext';
 import '../../assets/styles/ChatWidget.css';
-//const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://localhost:5000';  Cambia esto a tu URL de socket.io en producción
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://amigosjaen.onrender.com';
+//const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://localhost:5000';  socket.io en tests
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'https://amigosjaen.onrender.com'; //producción
 
 const ChatWidget = () => {
   const { usuario } = useContext(AuthContext);

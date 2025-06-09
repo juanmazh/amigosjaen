@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import { useAuth } from "../context/AuthContext";
 import Swal from "sweetalert2";
 
+// esta página muestra los detalles de un evento específico, incluyendo la posibilidad de inscribirse o desapuntarse, ver asistentes y editar/eliminar el evento si es el creador.
 function EventoDetalle() {
   const { id } = useParams();
   const [evento, setEvento] = useState(null);

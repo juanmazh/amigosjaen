@@ -8,7 +8,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Swal from "sweetalert2";
 import Comentarios from "./components/Comentarios";
-
+// pagina de detalle de publicación
 function PublicacionDetalle() {
   const { id } = useParams();
   const [publicacion, setPublicacion] = useState(null);

@@ -2,7 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import AuthContext from "../../context/AuthContext";
 import api from "../../api";
 import Swal from "sweetalert2";
-
+//componente de /crear-publicacion
 function CrearPublicacion({ onPublicacionCreada }) {
   const { usuario } = useContext(AuthContext);
   const [titulo, setTitulo] = useState("");

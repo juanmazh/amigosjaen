@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { FaEye } from "react-icons/fa";
-
+//página para el foro
 function Foro() {
   const [publicaciones, setPublicaciones] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");

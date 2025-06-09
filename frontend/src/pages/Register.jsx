@@ -2,7 +2,7 @@ import { useState } from 'react';
 import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import jaenImage from '../assets/jaen.jpg'; // Asegúrate de tener esta imagen en la carpeta assets
-
+// pagina de registro de usuario
 function Register() {
   const navigate = useNavigate();
   const [nombre, setNombre] = useState('');

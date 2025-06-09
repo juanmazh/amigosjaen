@@ -1,4 +1,4 @@
-//  AuthContext.jsx
+//  AuthContext.jsx dará acceso a la autenticación del usuario en toda la aplicación
 import { createContext, useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 

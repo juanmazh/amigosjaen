@@ -1,5 +1,5 @@
 import React from "react";
-
+// /terms
 export default function Terms() {
   return (
     <div className="max-w-2xl mx-auto py-10 px-4 bg-gradient-to-br from-pink-100 to-purple-200">

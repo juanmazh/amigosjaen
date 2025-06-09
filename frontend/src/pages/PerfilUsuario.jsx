@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PerfilSecciones from "./components/PerfilSecciones";
 import { useAuth } from "../context/AuthContext";
-
+// pagina de perfil de usuario que todo el mundo visita
 const PerfilUsuario = () => {
   const { id } = useParams();
   const { usuario: usuarioLog, cargando: cargandoAuth } = useAuth();

@@ -7,7 +7,7 @@ import api from "../api";
 import AdminUsuarios from "./components/AdminUsuarios";
 import AdminPublicaciones from "./components/AdminPublicaciones";
 import AdminEventos from "./components/AdminEventos";
-
+//página de administración para el administrador
 const MySwal = withReactContent(Swal);
 
 function Admin() {

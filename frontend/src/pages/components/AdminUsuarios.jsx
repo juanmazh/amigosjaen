@@ -1,5 +1,5 @@
 import React from "react";
-
+//componente de /admin
 const AdminUsuarios = ({ usuarios, abrirFormularioUsuario, eliminarUsuario }) => (
   <div className="bg-white shadow-lg rounded-xl p-6 mb-8 overflow-x-auto">
     <table className="min-w-full divide-y divide-gray-200 rounded-xl overflow-hidden">

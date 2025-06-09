@@ -5,7 +5,7 @@ import api from "../api";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AuthContext from "../context/AuthContext";
-
+// página para mostrar eventos
 function Eventos() {
   const [eventos, setEventos] = useState([]);
   const [filtro, setFiltro] = useState("");

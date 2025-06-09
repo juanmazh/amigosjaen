@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import api from "../api";
 import Swal from "sweetalert2";
+// pagina de valoraciones de eventos
 
 const Valoraciones = () => {
   const { usuario } = useContext(AuthContext);

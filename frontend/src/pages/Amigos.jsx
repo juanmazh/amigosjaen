@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../api";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
+// pagina de /amigos
 const Amigos = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [cargando, setCargando] = useState(true);

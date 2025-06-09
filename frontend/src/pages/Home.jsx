@@ -8,7 +8,7 @@ import CrearPublicacion from "./components/CrearPublicacion";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import EventosHome from "./components/EventosHome";
-
+// página principal que muestra publicaciones y eventos
 function Home() {
   const [publicaciones, setPublicaciones] = useState([]);
   const [mostrarFormulario, setMostrarFormulario] = useState(false);

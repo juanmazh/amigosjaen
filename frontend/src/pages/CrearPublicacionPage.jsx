@@ -3,7 +3,7 @@ import CrearPublicacion from "./components/CrearPublicacion";
 import { useState, useContext, useEffect } from 'react';
 import AuthContext from '../context/AuthContext';
 import Footer from "./components/Footer";
-
+// Componente de página para crear una nueva publicación
 function CrearPublicacionPage() {
   const navigate = useNavigate();
   const [publicacionCreada, setPublicacionCreada] = useState(false);

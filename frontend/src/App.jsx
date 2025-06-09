@@ -20,7 +20,8 @@ import ChatWidget from "./pages/components/ChatWidget";
 import Valoraciones from "./pages/Valoraciones";
 import './assets/styles/index.css';
 import './assets/styles/App.css';
-
+// Importar estilos globales y específicos de la aplicación
+// Core del frontend
 function App() {
   return (
     <>

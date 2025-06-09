@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import AuthContext from "../../context/AuthContext";
-
+// Componente de menú de usuario del header
 const MySwal = withReactContent(Swal);
 
 export default function UserMenu({ usuario }) {

@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from "react";
 import api from "../../api";
 import AuthContext from "../../context/AuthContext";
 import { FaReply, FaComment } from "react-icons/fa";
-
+//componente de /publicaciones/:id
 function Comentarios({ publicacionId, onNuevoComentario }) {
   const [comentarios, setComentarios] = useState([]);
   const [cargando, setCargando] = useState(true);

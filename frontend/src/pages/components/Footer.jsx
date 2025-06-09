@@ -1,5 +1,5 @@
 import React from 'react';
-
+//footer de la web
 function Footer() {
   return (
     <footer className="bg-gray-800 text-white py-6">
@@ -14,7 +14,7 @@ function Footer() {
         </p>
         <p className="text-sm mt-2">
           <a href="/privacy" className="text-gray-400 hover:text-white transition">Política de Privacidad</a>  |  
-          <a href="/terms" className="text-gray-400 hover:text-white transition">Términos de Servicio</a>
+          <a href="/terms" className="text-gray-400 hover:text-white transition"> Términos de Servicio</a>
         </p>
         <p className="text-sm mt-2">Síguenos en:
           <a href="https://www.linkedin.com/in/juan-manuel-zafra-hern%C3%A1ndez-5b2bb7339/" className="ml-2 text-gray-400 hover:text-white transition" target="_blank" rel="noopener noreferrer">

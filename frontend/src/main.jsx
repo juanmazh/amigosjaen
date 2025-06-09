@@ -8,7 +8,7 @@ import PublicacionDetalle from './pages/PublicacionDetalle';
 import About from './pages/About';
 import './assets/styles/index.css';
 import './assets/styles/App.css';
-
+//Gestión de rutas y contexto de autenticación
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>

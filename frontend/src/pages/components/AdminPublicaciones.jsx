@@ -1,5 +1,5 @@
 import React from "react";
-
+//componente de /admin
 const AdminPublicaciones = ({ publicaciones, abrirFormularioPublicacion, eliminarPublicacion }) => (
   <div className="bg-white shadow-lg rounded-xl p-6 mb-8 overflow-x-auto">
     <div className="flex justify-between items-center mb-4">

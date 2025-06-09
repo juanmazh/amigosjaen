@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import UserMenu from './UserMenu';
 import { useContext } from 'react';
 import AuthContext from '../../context/AuthContext';
-
+//header de la aplicación
 function Header() {
   const { usuario } = useContext(AuthContext);
   const navigate = useNavigate();

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api";
 import AuthContext from "../../context/AuthContext";
-
+// Componente de secciones del perfil de usuario
 const PerfilSecciones = ({ usuario, mostrarEventosPorEstado, eventosFinalizadosCreados, cargandoEventosFinalizados }) => {
   // Descripción editable
   const [descripcion, setDescripcion] = useState("");

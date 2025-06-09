@@ -4,7 +4,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PerfilSecciones from "./components/PerfilSecciones";
 import api from "../api";
-
+// Componente de perfil de usuario personal
 const Perfil = () => {
   const { usuario } = useContext(AuthContext);
   const [seguidores, setSeguidores] = useState(0);

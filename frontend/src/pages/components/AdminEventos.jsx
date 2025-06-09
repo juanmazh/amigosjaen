@@ -1,5 +1,5 @@
 import React from "react";
-
+//componente de /admin
 const AdminEventos = ({ eventos, asistentesEventos, abrirFormularioEvento, eliminarEvento, MySwal }) => (
   <div className="bg-white shadow-lg rounded-xl p-6 overflow-x-auto">
     <div className="flex justify-between items-center mb-4">

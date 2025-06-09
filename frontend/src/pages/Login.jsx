@@ -2,7 +2,7 @@ import { useState, useContext } from 'react';
 import AuthContext from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import jaenImage from '../assets/jaen.jpg'; // Asegúrate de tener esta imagen en la carpeta assets
-
+//login
 function Login() {
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
