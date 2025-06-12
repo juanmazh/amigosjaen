@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { Publicacion, Usuario, Etiqueta } = require('../models');
 const verificarToken = require("../middleware/verificarToken");
+const sequelize = require('sequelize');
 
 router.get('/', async (req, res) => {
   try {
@@ -95,13 +96,18 @@ router.post('/', async (req, res) => {
 
     // Manejar etiquetas
     if (etiquetas && etiquetas.length > 0) {
-      // Normalizar nombres y loguear
       const etiquetasNormalizadas = etiquetas.map(nombre => nombre.trim().toLowerCase());
       console.log('Etiquetas normalizadas:', etiquetasNormalizadas);
       const etiquetasCreadas = await Promise.all(
         etiquetasNormalizadas.map(async (nombre) => {
-          const [etiqueta] = await Etiqueta.findOrCreate({ where: { nombre } });
-          console.log('Etiqueta encontrada/creada:', etiqueta.id, etiqueta.nombre);
+          // Buscar ignorando mayúsculas/minúsculas
+          let etiqueta = await Etiqueta.findOne({ where: sequelize.where(sequelize.fn('LOWER', sequelize.col('nombre')), nombre) });
+          if (!etiqueta) {
+            etiqueta = await Etiqueta.create({ nombre });
+            console.log('Etiqueta creada:', etiqueta.id, etiqueta.nombre);
+          } else {
+            console.log('Etiqueta encontrada:', etiqueta.id, etiqueta.nombre);
+          }
           return etiqueta;
         })
       );
