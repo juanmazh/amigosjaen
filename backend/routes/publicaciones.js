@@ -33,6 +33,7 @@ router.get('/', async (req, res) => {
 
     res.json(formateadas);
   } catch (err) {
+    console.error('Error al obtener publicaciones:', err);
     res.status(500).json({ msg: 'Error al obtener publicaciones' });
   }
 });
