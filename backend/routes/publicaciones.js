@@ -23,13 +23,15 @@ router.get('/', async (req, res) => {
       order: [['createdAt', 'DESC']]
     });
 
-    const formateadas = publicaciones.map(pub => ({
-      id: pub.id,
-      titulo: pub.titulo,
-      contenido: pub.contenido,
-      autorNombre: pub.Usuario.nombre,
-      tags: pub.tags ? pub.tags.map(tag => ({ id: tag.id, nombre: tag.nombre })) : [],
-    }));
+    const formateadas = publicaciones
+      .filter(pub => pub.Usuario) // Solo publicaciones con usuario
+      .map(pub => ({
+        id: pub.id,
+        titulo: pub.titulo,
+        contenido: pub.contenido,
+        autorNombre: pub.Usuario.nombre,
+        tags: pub.tags ? pub.tags.map(tag => ({ id: tag.id, nombre: tag.nombre })) : [],
+      }));
 
     res.json(formateadas);
   } catch (err) {
