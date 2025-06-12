@@ -95,9 +95,13 @@ router.post('/', async (req, res) => {
 
     // Manejar etiquetas
     if (etiquetas && etiquetas.length > 0) {
+      // Normalizar nombres y loguear
+      const etiquetasNormalizadas = etiquetas.map(nombre => nombre.trim().toLowerCase());
+      console.log('Etiquetas normalizadas:', etiquetasNormalizadas);
       const etiquetasCreadas = await Promise.all(
-        etiquetas.map(async (nombre) => {
+        etiquetasNormalizadas.map(async (nombre) => {
           const [etiqueta] = await Etiqueta.findOrCreate({ where: { nombre } });
+          console.log('Etiqueta encontrada/creada:', etiqueta.id, etiqueta.nombre);
           return etiqueta;
         })
       );
