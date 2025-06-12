@@ -26,6 +26,22 @@ router.delete('/:id', verificarToken, soloAdmin, async (req, res) => {
     const usuario = await Usuario.findByPk(req.params.id);
     if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
 
+    // Eliminar publicaciones del usuario
+    await require('../models/Publicacion').destroy({ where: { UsuarioId: usuario.id } });
+    // Eliminar comentarios del usuario
+    await require('../models/Comentario').destroy({ where: { usuarioId: usuario.id } });
+    // Eliminar seguidores (donde es seguidor o seguido)
+    const { Seguidores } = require('../models');
+    await Seguidores.destroy({ where: { seguidorId: usuario.id } });
+    await Seguidores.destroy({ where: { seguidoId: usuario.id } });
+    // Eliminar valoraciones
+    await require('../models/Valoracion').destroy({ where: { usuarioId: usuario.id } });
+    // Eliminar asistencias a eventos
+    await require('../models/AsistentesEventos').destroy({ where: { usuarioId: usuario.id } });
+    // Eliminar mensajes directos
+    await require('../models/MensajeDirecto')(require('../models').sequelize).destroy({ where: { remitenteId: usuario.id } });
+    await require('../models/MensajeDirecto')(require('../models').sequelize).destroy({ where: { destinatarioId: usuario.id } });
+
     await usuario.destroy();
     res.json({ msg: 'Usuario eliminado correctamente' });
   } catch (error) {
