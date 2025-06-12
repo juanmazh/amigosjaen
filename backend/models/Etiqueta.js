@@ -9,6 +9,8 @@ const Etiqueta = sequelize.define('Etiqueta', {
     allowNull: false,
     unique: true,
   },
+}, {
+  tableName: 'Etiquetas', // Usar la tabla plural correcta
 });
 
 // Relaciones definidas en models/index.js
