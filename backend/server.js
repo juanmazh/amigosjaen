@@ -19,27 +19,33 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
+const normalize = (url) => url?.replace(/\/$/, '').toLowerCase();
+
 const allowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'http://127.0.0.1:5173',
   'http://127.0.0.1:3000',
   ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
-];
+].map(normalize);
 
-app.use(cors({
+const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+    if (!origin || allowedOrigins.includes(normalize(origin))) {
       callback(null, true);
     } else {
-      callback(new Error('No permitido por CORS'));
+      // Devuelve false en lugar de lanzar Error para que CORS siga enviando cabeceras
+      callback(null, false);
     }
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
   optionsSuccessStatus: 200,
-}));
+};
+
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.get('/', (req, res) => res.json({ status: 'ok', app: 'AmigosJaén API' }));
 
@@ -55,7 +61,13 @@ app.use('/api/valoraciones', valoracionesRoutes);
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(normalize(origin))) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
