@@ -19,25 +19,23 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
-const normalize = (url) => url?.replace(/\/$/, '').toLowerCase();
-
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-  'http://127.0.0.1:5173',
-  'http://127.0.0.1:3000',
-  ...(process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : []),
-].map(normalize);
+const isOriginAllowed = (origin) => {
+  if (!origin) return true;
+  const o = origin.replace(/\/$/, '').toLowerCase();
+  // Locales
+  if (o.startsWith('http://localhost') || o.startsWith('http://127.0.0.1')) return true;
+  // Netlify (cualquier subdominio)
+  if (o.endsWith('.netlify.app')) return true;
+  // FRONTEND_URL explícita
+  if (process.env.FRONTEND_URL) {
+    const allowed = process.env.FRONTEND_URL.replace(/\/$/, '').toLowerCase();
+    if (o === allowed) return true;
+  }
+  return false;
+};
 
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(normalize(origin))) {
-      callback(null, true);
-    } else {
-      // Devuelve false en lugar de lanzar Error para que CORS siga enviando cabeceras
-      callback(null, false);
-    }
-  },
+  origin: (origin, callback) => callback(null, isOriginAllowed(origin)),
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -61,13 +59,7 @@ app.use('/api/valoraciones', valoracionesRoutes);
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(normalize(origin))) {
-        callback(null, true);
-      } else {
-        callback(null, false);
-      }
-    },
+    origin: (origin, callback) => callback(null, isOriginAllowed(origin)),
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization'],
