@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+@theme {
+  /* Paleta — Jaén */
+  --color-jaen-50:  #F6F0FA;
+  --color-jaen-100: #E8DAF1;
+  --color-jaen-200: #CFB1E0;
+  --color-jaen-300: #A77BC4;
+  --color-jaen-400: #7E4AA8;
+  --color-jaen-500: #5B2A86;
+  --color-jaen-600: #4A2070;
+  --color-jaen-700: #3D1B5C;
+  --color-jaen-800: #2C1242;
+  --color-jaen-900: #1C0A2B;
+
+  --color-olivo-100: #E8EBD8;
+  --color-olivo-300: #B5C081;
+  --color-olivo-500: #6B8E23;
+  --color-olivo-700: #4F6A19;
+
+  --color-ambar-300: #E6C078;
+  --color-ambar-500: #D4A24C;
+  --color-ambar-700: #A87830;
+
+  --color-crema-50:  #FDFAF4;
+  --color-crema-100: #FAF6EE;
+  --color-crema-200: #F2EADC;
+  --color-crema-300: #E5D7BD;
+
+  --color-piedra-500: #6B6B6B;
+  --color-piedra-700: #3A3A3A;
+  --color-piedra-900: #1A1A1A;
+
+  /* Tipografías */
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+html, body {
+  font-family: var(--font-sans);
+  color: var(--color-piedra-700);
+  background-color: var(--color-crema-100);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
+}
+
+/* Scrollbar discreta a juego */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--color-crema-100); }
+::-webkit-scrollbar-thumb { background: var(--color-jaen-200); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-jaen-300); }
