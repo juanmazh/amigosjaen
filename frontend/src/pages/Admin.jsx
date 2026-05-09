@@ -37,9 +37,10 @@ function Admin() {
     }
   }, [eventos]);
 
-  const cargarUsuarios = () => api.get("/usuarios").then((res) => setUsuarios(res.data.usuario || res.data)).catch(() => Swal.fire("Error", "No se pudieron cargar los usuarios", "error"));
-  const cargarPublicaciones = () => api.get("/publicaciones").then((res) => setPublicaciones(res.data.publicacion || res.data)).catch(() => Swal.fire("Error", "No se pudieron cargar las publicaciones", "error"));
-  const cargarEventos = () => api.get("/eventos").then((res) => setEventos(res.data.evento || res.data)).catch(() => Swal.fire("Error", "No se pudieron cargar los eventos", "error"));
+  const errorMsg = (e, fallback) => `${fallback}\n[${e.response?.status || '?'}] ${e.response?.data?.msg || e.response?.data?.mensaje || e.message}`;
+  const cargarUsuarios = () => api.get("/usuarios").then((res) => setUsuarios(res.data.usuario || res.data)).catch((e) => Swal.fire("Error", errorMsg(e, "No se pudieron cargar los usuarios"), "error"));
+  const cargarPublicaciones = () => api.get("/publicaciones").then((res) => setPublicaciones(res.data.publicacion || res.data)).catch((e) => Swal.fire("Error", errorMsg(e, "No se pudieron cargar las publicaciones"), "error"));
+  const cargarEventos = () => api.get("/eventos").then((res) => setEventos(res.data.evento || res.data)).catch((e) => Swal.fire("Error", errorMsg(e, "No se pudieron cargar los eventos"), "error"));
 
   const eliminar = async (tipo, id, endpoint, setter) => {
     const res = await Swal.fire({ title: `¿Eliminar ${tipo}?`, text: "Esta acción no se puede deshacer.", icon: "warning", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar" });

@@ -13,7 +13,12 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 403 || error.response?.status === 401) {
+    // Solo limpiar token si el backend dice que es inválido/expirado.
+    // No limpiar en 403 generales (p.ej. "no eres admin") — el token sigue siendo válido.
+    const msg = error.response?.data?.mensaje || error.response?.data?.msg || '';
+    const tokenInvalido = error.response?.status === 401 ||
+      (error.response?.status === 403 && /token/i.test(msg));
+    if (tokenInvalido) {
       localStorage.removeItem('token');
     }
     return Promise.reject(error);
