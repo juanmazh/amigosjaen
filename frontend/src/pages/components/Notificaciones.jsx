@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
 import api from "../../api";
 import AuthContext from "../../context/AuthContext";
+import { useSocket } from "../../context/SocketContext";
 
 export default function Notificaciones() {
   const { usuario } = useContext(AuthContext);
+  const socket = useSocket();
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState([]);
   const [noLeidas, setNoLeidas] = useState(0);
@@ -14,19 +16,25 @@ export default function Notificaciones() {
   const dropdown = useRef(null);
   const trigger = useRef(null);
 
-  // Polling del contador cada 30s
+  // Carga inicial del contador
   useEffect(() => {
     if (!usuario) return;
-    let cancelado = false;
-    const tick = () => {
-      api.get("/notificaciones/no-leidas")
-        .then((res) => { if (!cancelado) setNoLeidas(res.data.total || 0); })
-        .catch(() => {});
-    };
-    tick();
-    const intervalo = setInterval(tick, 30000);
-    return () => { cancelado = true; clearInterval(intervalo); };
+    api.get("/notificaciones/no-leidas")
+      .then((res) => setNoLeidas(res.data.total || 0))
+      .catch(() => {});
   }, [usuario]);
+
+  // Escucha en tiempo real notificaciones nuevas vía socket
+  useEffect(() => {
+    if (!socket || !usuario) return;
+    const handler = (notif) => {
+      setNoLeidas((prev) => prev + 1);
+      // Si el dropdown está abierto, añadimos al principio para que se vea de inmediato
+      setItems((prev) => [notif, ...prev]);
+    };
+    socket.on("nuevaNotificacion", handler);
+    return () => { socket.off("nuevaNotificacion", handler); };
+  }, [socket, usuario]);
 
   // Cerrar al click fuera
   useEffect(() => {

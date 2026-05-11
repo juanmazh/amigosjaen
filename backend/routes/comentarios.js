@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { Comentario, Publicacion, Usuario, Notificacion } = require('../models');
 const verificarToken = require('../middleware/verificarToken');
+const { emitirAUsuario } = require('../realtime');
 
 // Obtener comentarios de una publicación (con respuestas anidadas)
 router.get('/publicacion/:publicacionId', async (req, res) => {
@@ -42,11 +43,12 @@ router.post('/', verificarToken, async (req, res) => {
     const autor = await Usuario.findByPk(usuarioId, { attributes: ['id', 'nombre'] });
 
     try {
+      let nuevaNotif = null;
       if (parentId) {
         // Respuesta a otro comentario → notificar al autor del comentario padre
         const padre = await Comentario.findByPk(parentId);
         if (padre && padre.usuarioId !== usuarioId) {
-          await Notificacion.create({
+          nuevaNotif = await Notificacion.create({
             usuarioId: padre.usuarioId,
             tipo: 'respuesta',
             mensaje: `${autor?.nombre || 'Alguien'} ha respondido a tu comentario`,
@@ -57,7 +59,7 @@ router.post('/', verificarToken, async (req, res) => {
         // Comentario directo en la publicación → notificar al autor de la publicación
         const publicacion = await Publicacion.findByPk(publicacionId);
         if (publicacion && publicacion.UsuarioId !== usuarioId) {
-          await Notificacion.create({
+          nuevaNotif = await Notificacion.create({
             usuarioId: publicacion.UsuarioId,
             tipo: 'comentario',
             mensaje: `${autor?.nombre || 'Alguien'} ha comentado en tu publicación`,
@@ -65,6 +67,8 @@ router.post('/', verificarToken, async (req, res) => {
           });
         }
       }
+      // Empujar la notificación al destinatario en tiempo real si está conectado
+      if (nuevaNotif) emitirAUsuario(nuevaNotif.usuarioId, 'nuevaNotificacion', nuevaNotif);
     } catch (notifErr) {
       // No queremos que un fallo de notificación tire la respuesta del comentario
       console.error('Error creando notificación:', notifErr.message);

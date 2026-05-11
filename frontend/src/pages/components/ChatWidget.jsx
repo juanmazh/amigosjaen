@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { io } from 'socket.io-client';
 import { FaComments, FaArrowLeft, FaUserPlus, FaListUl, FaComment } from 'react-icons/fa';
 import AuthContext from '../../context/AuthContext';
+import { useSocket } from '../../context/SocketContext';
 import api from '../../api';
 import '../../assets/styles/ChatWidget.css';
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
-
 const ChatWidget = () => {
   const { usuario } = useContext(AuthContext);
+  const socket = useSocket();
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState('conversaciones');
   const [conversaciones, setConversaciones] = useState([]);
@@ -16,20 +15,11 @@ const ChatWidget = () => {
   const [mensajes, setMensajes] = useState([]);
   const [usuarioActivo, setUsuarioActivo] = useState(null);
   const [nuevoMensaje, setNuevoMensaje] = useState('');
-  const socketRef = useRef(null);
   const mensajesEndRef = useRef(null);
 
   useEffect(() => {
-    if (usuario) {
-      socketRef.current = io(SOCKET_URL, { withCredentials: true });
-      socketRef.current.emit('registrarUsuario', usuario.id);
-      return () => socketRef.current.disconnect();
-    }
-  }, [usuario]);
-
-  useEffect(() => {
-    if (!socketRef.current) return;
-    socketRef.current.on('nuevoMensaje', (mensaje) => {
+    if (!socket || !usuario) return;
+    const handler = (mensaje) => {
       if (
         (mensaje.remitenteId === usuarioActivo?.id && mensaje.destinatarioId === usuario.id) ||
         (mensaje.remitenteId === usuario.id && mensaje.destinatarioId === usuarioActivo?.id)
@@ -42,12 +32,13 @@ const ChatWidget = () => {
           return [...prev, mensaje];
         });
       }
-    });
-    return () => { socketRef.current.off('nuevoMensaje'); };
-  }, [usuarioActivo, usuario]);
+    };
+    socket.on('nuevoMensaje', handler);
+    return () => { socket.off('nuevoMensaje', handler); };
+  }, [socket, usuarioActivo, usuario]);
 
   useEffect(() => {
-    if (!socketRef.current) return;
+    if (!socket || !usuario) return;
     const actualizarConversaciones = (mensaje) => {
       setConversaciones(prev => {
         const otroId = mensaje.remitenteId === usuario.id ? mensaje.destinatarioId : mensaje.remitenteId;
@@ -63,9 +54,9 @@ const ChatWidget = () => {
         return [{ usuario: usuarioConv, ultimoMensaje: mensajeActualizado, mensajes: [mensajeActualizado] }, ...prev];
       });
     };
-    socketRef.current.on('nuevoMensaje', actualizarConversaciones);
-    return () => { socketRef.current.off('nuevoMensaje', actualizarConversaciones); };
-  }, [usuario, seguidores, usuarioActivo]);
+    socket.on('nuevoMensaje', actualizarConversaciones);
+    return () => { socket.off('nuevoMensaje', actualizarConversaciones); };
+  }, [socket, usuario, seguidores, usuarioActivo]);
 
   useEffect(() => {
     if (!usuario) return;
@@ -111,7 +102,8 @@ const ChatWidget = () => {
   const enviarMensaje = (e) => {
     e.preventDefault();
     if (!nuevoMensaje.trim() || !usuarioActivo) return;
-    socketRef.current.emit('mensajeDirecto', {
+    if (!socket) return;
+    socket.emit('mensajeDirecto', {
       remitenteId: usuario.id,
       destinatarioId: usuarioActivo.id,
       contenido: nuevoMensaje,

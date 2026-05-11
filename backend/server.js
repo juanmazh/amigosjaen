@@ -14,6 +14,7 @@ const comentariosRouter = require('./routes/comentarios');
 const mensajesDirectosRoutes = require('./routes/mensajesDirectos');
 const valoracionesRoutes = require('./routes/valoraciones');
 const notificacionesRoutes = require('./routes/notificaciones');
+const realtime = require('./realtime');
 
 const app = express();
 app.use(express.json());
@@ -68,12 +69,13 @@ const io = socketIo(server, {
   }
 });
 
-const usuariosConectados = new Map();
+realtime.setIo(io);
+const { usuariosConectados } = realtime;
 
 io.on('connection', (socket) => {
   socket.on('registrarUsuario', (userId) => {
-    usuariosConectados.set(userId, socket.id);
-    socket.userId = userId;
+    usuariosConectados.set(Number(userId), socket.id);
+    socket.userId = Number(userId);
   });
 
   socket.on('mensajeDirecto', async (data) => {
