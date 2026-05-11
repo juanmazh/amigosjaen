@@ -59,24 +59,32 @@ export default function Notificaciones() {
     }
   };
 
-  const clickItem = async (n) => {
-    if (!n.leida) {
-      try {
-        await api.patch(`/notificaciones/${n.id}/leer`);
-        setNoLeidas((prev) => Math.max(0, prev - 1));
-        setItems((prev) => prev.map((x) => x.id === n.id ? { ...x, leida: true } : x));
-      } catch {}
+  const marcarComoLeida = async (id) => {
+    try {
+      await api.patch(`/notificaciones/${id}/leer`);
+      setNoLeidas((prev) => Math.max(0, prev - 1));
+      setItems((prev) => prev.map((x) => x.id === id ? { ...x, leida: true } : x));
+    } catch (e) {
+      console.error("Error marcando como leída:", e);
     }
+  };
+
+  const clickItem = async (n) => {
+    if (!n.leida) await marcarComoLeida(n.id);
     setOpen(false);
     if (n.enlaceUrl) navigate(n.enlaceUrl);
   };
 
-  const marcarTodas = async () => {
+  const marcarTodas = async (e) => {
+    // Evita que el click cierre el dropdown
+    e?.stopPropagation();
     try {
       await api.patch("/notificaciones/leer-todas");
       setNoLeidas(0);
       setItems((prev) => prev.map((x) => ({ ...x, leida: true })));
-    } catch {}
+    } catch (err) {
+      console.error("Error marcando todas:", err);
+    }
   };
 
   if (!usuario) return null;
@@ -119,16 +127,17 @@ export default function Notificaciones() {
             ) : (
               <ul className="divide-y divide-crema-200">
                 {items.map((n) => (
-                  <li key={n.id}>
+                  <li
+                    key={n.id}
+                    className={`group relative hover:bg-jaen-50 transition-colors ${!n.leida ? "bg-jaen-50/40" : ""}`}
+                  >
                     <button
                       onClick={() => clickItem(n)}
-                      className={`w-full text-left px-4 py-3 hover:bg-jaen-50 transition-colors ${
-                        !n.leida ? "bg-jaen-50/40" : ""
-                      }`}
+                      className="w-full text-left px-4 py-3"
                     >
                       <div className="flex items-start gap-3">
                         {!n.leida && <span className="w-2 h-2 rounded-full bg-jaen-500 mt-1.5 shrink-0" />}
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 pr-6">
                           <p className={`text-sm leading-snug ${!n.leida ? "text-piedra-900 font-medium" : "text-piedra-700"}`}>
                             {n.mensaje}
                           </p>
@@ -140,6 +149,15 @@ export default function Notificaciones() {
                         </div>
                       </div>
                     </button>
+                    {!n.leida && (
+                      <button
+                        onClick={(e) => { e.stopPropagation(); marcarComoLeida(n.id); }}
+                        className="absolute top-2.5 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-jaen-600 hover:text-jaen-700 font-medium px-2 py-0.5 rounded"
+                        title="Marcar como leída"
+                      >
+                        ✓
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
