@@ -42,20 +42,31 @@ function Admin() {
   const cargarPublicaciones = () => api.get("/publicaciones").then((res) => setPublicaciones(res.data.publicacion || res.data)).catch((e) => Swal.fire("Error", errorMsg(e, "No se pudieron cargar las publicaciones"), "error"));
   const cargarEventos = () => api.get("/eventos").then((res) => setEventos(res.data.evento || res.data)).catch((e) => Swal.fire("Error", errorMsg(e, "No se pudieron cargar los eventos"), "error"));
 
-  const eliminar = async (tipo, id, endpoint, setter) => {
+  // Recarga todas las listas. Útil tras borrar un usuario, que arrastra
+  // publicaciones y eventos en cascada.
+  const recargarTodo = () => { cargarUsuarios(); cargarPublicaciones(); cargarEventos(); };
+
+  const eliminar = async (tipo, id, endpoint, setter, refrescarTodo = false) => {
     const res = await Swal.fire({ title: `¿Eliminar ${tipo}?`, text: "Esta acción no se puede deshacer.", icon: "warning", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar" });
-    if (res.isConfirmed) {
-      try {
-        await api.delete(`${endpoint}/${id}`);
+    if (!res.isConfirmed) return;
+    try {
+      await api.delete(`${endpoint}/${id}`);
+      setter((prev) => prev.filter((x) => x.id !== id));
+      if (refrescarTodo) recargarTodo();
+      Swal.fire("Eliminado", "Eliminado correctamente", "success");
+    } catch (e) {
+      // Si el backend dice 404 es que ya no existía (datos obsoletos en el frontend)
+      // → lo quitamos de la lista local y avisamos.
+      if (e.response?.status === 404) {
         setter((prev) => prev.filter((x) => x.id !== id));
-        Swal.fire("Eliminado", "Eliminado correctamente", "success");
-      } catch {
-        Swal.fire("Error", `No se pudo eliminar el ${tipo}`, "error");
+        Swal.fire("Sin cambios", `Ese ${tipo} ya no existía. Lista actualizada.`, "info");
+      } else {
+        Swal.fire("Error", errorMsg(e, `No se pudo eliminar el ${tipo}`), "error");
       }
     }
   };
 
-  const eliminarUsuario = (id) => eliminar("usuario", id, "/usuarios", setUsuarios);
+  const eliminarUsuario = (id) => eliminar("usuario", id, "/usuarios", setUsuarios, true);
   const eliminarPublicacion = (id) => eliminar("publicación", id, "/publicaciones", setPublicaciones);
   const eliminarEvento = (id) => eliminar("evento", id, "/eventos", setEventos);
 

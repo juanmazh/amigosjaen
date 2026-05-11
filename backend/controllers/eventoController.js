@@ -114,23 +114,34 @@ const listarEventoPorId = async (req, res) => {
   }
 };
 
-// Eliminar un evento (dueño o admin)
+// Eliminar un evento (dueño o admin) — limpia asistentes, valoraciones y etiquetas primero
 const eliminarEvento = async (req, res) => {
+  const { Valoracion, sequelize } = require("../models");
+  const t = await sequelize.transaction();
   try {
     const { id } = req.params;
-    const evento = await Evento.findByPk(id);
+    const evento = await Evento.findByPk(id, { transaction: t });
     if (!evento) {
+      await t.rollback();
       return res.status(404).json({ error: "Evento no encontrado" });
     }
     // Permitir si es el dueño o admin
     if (evento.usuarioId !== req.usuario.id && req.usuario.rol !== 'admin') {
+      await t.rollback();
       return res.status(403).json({ error: "No tienes permiso para borrar este evento" });
     }
-    await evento.destroy();
+    // Borrar dependientes antes que el evento
+    await Valoracion.destroy({ where: { eventoId: evento.id }, transaction: t });
+    await AsistentesEventos.destroy({ where: { eventoId: evento.id }, transaction: t });
+    await evento.setEventosTags([], { transaction: t });
+    await evento.destroy({ transaction: t });
+
+    await t.commit();
     res.status(200).json({ msg: "Evento eliminado correctamente" });
   } catch (error) {
+    await t.rollback();
     console.error("Error al eliminar el evento:", error);
-    res.status(500).json({ error: "Error al eliminar el evento" });
+    res.status(500).json({ error: "Error al eliminar el evento", detalle: error.message });
   }
 };
 

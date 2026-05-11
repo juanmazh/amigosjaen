@@ -20,33 +20,79 @@ router.get('/', verificarToken, soloAdmin, async (req, res) => {
   }
 });
 
-// Eliminar un usuario (solo admin)
+// Eliminar un usuario (solo admin) — borrado en cascada en transacción.
+// El orden importa por las foreign keys: primero hijos, luego padres.
 router.delete('/:id', verificarToken, soloAdmin, async (req, res) => {
+  const {
+    Publicacion, Comentario, Seguidores, Valoracion,
+    AsistentesEventos, MensajeDirecto, Notificacion, Evento, sequelize,
+  } = require('../models');
+
+  const t = await sequelize.transaction();
   try {
-    const usuario = await Usuario.findByPk(req.params.id);
-    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+    const usuario = await Usuario.findByPk(req.params.id, { transaction: t });
+    if (!usuario) {
+      await t.rollback();
+      return res.status(404).json({ msg: 'Usuario no encontrado' });
+    }
 
-    // Eliminar publicaciones del usuario
-    await require('../models/Publicacion').destroy({ where: { UsuarioId: usuario.id } });
-    // Eliminar comentarios del usuario
-    await require('../models/Comentario').destroy({ where: { usuarioId: usuario.id } });
-    // Eliminar seguidores (donde es seguidor o seguido)
-    const { Seguidores } = require('../models');
-    await Seguidores.destroy({ where: { seguidorId: usuario.id } });
-    await Seguidores.destroy({ where: { seguidoId: usuario.id } });
-    // Eliminar valoraciones
-    await require('../models/Valoracion').destroy({ where: { usuarioId: usuario.id } });
-    // Eliminar asistencias a eventos
-    await require('../models/AsistentesEventos').destroy({ where: { usuarioId: usuario.id } });
-    // Eliminar mensajes directos
-    await require('../models/MensajeDirecto')(require('../models').sequelize).destroy({ where: { remitenteId: usuario.id } });
-    await require('../models/MensajeDirecto')(require('../models').sequelize).destroy({ where: { destinatarioId: usuario.id } });
+    const uid = usuario.id;
 
-    await usuario.destroy();
+    // 1) Notificaciones recibidas por el usuario
+    await Notificacion.destroy({ where: { usuarioId: uid }, transaction: t });
+
+    // 2) Mensajes directos (en ambos sentidos)
+    await MensajeDirecto.destroy({ where: { remitenteId: uid }, transaction: t });
+    await MensajeDirecto.destroy({ where: { destinatarioId: uid }, transaction: t });
+
+    // 3) Seguidores (en ambos sentidos)
+    await Seguidores.destroy({ where: { seguidorId: uid }, transaction: t });
+    await Seguidores.destroy({ where: { seguidoId: uid }, transaction: t });
+
+    // 4) Valoraciones hechas por el usuario
+    await Valoracion.destroy({ where: { usuarioId: uid }, transaction: t });
+
+    // 5) Asistencias a eventos del usuario
+    await AsistentesEventos.destroy({ where: { usuarioId: uid }, transaction: t });
+
+    // 6) Comentarios hechos por el usuario en cualquier publicación
+    await Comentario.destroy({ where: { usuarioId: uid }, transaction: t });
+
+    // 7) Publicaciones del usuario — antes hay que borrar todos los comentarios
+    //    que OTROS usuarios hayan dejado en ellas (FK publicacionId).
+    const publis = await Publicacion.findAll({
+      where: { UsuarioId: uid },
+      attributes: ['id'],
+      transaction: t,
+    });
+    if (publis.length > 0) {
+      const idsPublis = publis.map((p) => p.id);
+      await Comentario.destroy({ where: { publicacionId: idsPublis }, transaction: t });
+      await Publicacion.destroy({ where: { id: idsPublis }, transaction: t });
+    }
+
+    // 8) Eventos creados por el usuario — quitamos asistentes/valoraciones primero
+    const eventosCreados = await Evento.findAll({
+      where: { usuarioId: uid },
+      attributes: ['id'],
+      transaction: t,
+    });
+    if (eventosCreados.length > 0) {
+      const idsEv = eventosCreados.map((e) => e.id);
+      await Valoracion.destroy({ where: { eventoId: idsEv }, transaction: t });
+      await AsistentesEventos.destroy({ where: { eventoId: idsEv }, transaction: t });
+      await Evento.destroy({ where: { id: idsEv }, transaction: t });
+    }
+
+    // 9) Finalmente el propio usuario
+    await usuario.destroy({ transaction: t });
+
+    await t.commit();
     res.json({ msg: 'Usuario eliminado correctamente' });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: 'Error al eliminar el usuario' });
+    await t.rollback();
+    console.error('Error al eliminar usuario:', error);
+    res.status(500).json({ msg: 'Error al eliminar el usuario', detalle: error.message });
   }
 });
 

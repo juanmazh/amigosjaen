@@ -161,23 +161,36 @@ router.get('/etiquetas', async (req, res) => {
   }
 });
 
-// Eliminar una publicación (dueño o admin)
+// Eliminar una publicación (dueño o admin) — borra primero comentarios + relaciones
 router.delete('/:id', verificarToken, async (req, res) => {
+  const { Comentario, sequelize } = require('../models');
+  const t = await sequelize.transaction();
   try {
     const { id } = req.params;
-    const publicacion = await Publicacion.findByPk(id);
+    const publicacion = await Publicacion.findByPk(id, { transaction: t });
     if (!publicacion) {
+      await t.rollback();
       return res.status(404).json({ msg: 'Publicación no encontrada' });
     }
     // Permitir si es el dueño o admin
     if (publicacion.UsuarioId !== req.usuario.id && req.usuario.rol !== 'admin') {
+      await t.rollback();
       return res.status(403).json({ msg: 'No tienes permiso para borrar esta publicación' });
     }
-    await publicacion.destroy();
+
+    // Borrar comentarios (cualquier autor) que cuelgan de esta publicación
+    await Comentario.destroy({ where: { publicacionId: publicacion.id }, transaction: t });
+    // Quitar etiquetas asociadas (tabla intermedia PublicacionEtiquetas)
+    await publicacion.setTags([], { transaction: t });
+    // Borrar la publicación
+    await publicacion.destroy({ transaction: t });
+
+    await t.commit();
     res.status(200).json({ msg: 'Publicación eliminada correctamente' });
   } catch (err) {
+    await t.rollback();
     console.error('Error al eliminar publicación:', err);
-    res.status(500).json({ msg: 'Error al eliminar publicación' });
+    res.status(500).json({ msg: 'Error al eliminar publicación', detalle: err.message });
   }
 });
 
