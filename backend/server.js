@@ -96,7 +96,11 @@ io.on('connection', (socket) => {
 sequelize.authenticate()
   .then(() => {
     console.log('Conexión a la base de datos establecida');
-    return sequelize.sync({ force: false });
+    // SYNC_ALTER=true en Render solo cuando quieras propagar cambios de modelo a la DB.
+    // En condiciones normales, deja la variable sin definir o en "false".
+    const alterar = process.env.SYNC_ALTER === 'true';
+    if (alterar) console.warn('⚠️  Ejecutando sync({ alter: true }) — modificará el esquema de la DB');
+    return sequelize.sync({ force: false, alter: alterar });
   })
   .then(() => {
     server.listen(PORT, () => console.log(`Servidor en http://localhost:${PORT}`));
