@@ -4,6 +4,7 @@ import { FaSearch } from "react-icons/fa";
 import api from "../api";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Avatar from "./components/Avatar";
 
 const Amigos = () => {
   const [usuarios, setUsuarios] = useState([]);
@@ -55,9 +56,7 @@ const Amigos = () => {
                 key={u.id}
                 className="group bg-white border border-crema-300 rounded-2xl p-5 flex items-center gap-4 hover:border-jaen-300 hover:shadow-md transition-all"
               >
-                <div className="w-12 h-12 rounded-full bg-jaen-100 text-jaen-600 flex items-center justify-center font-display text-xl font-semibold shrink-0">
-                  {u.nombre?.[0]?.toUpperCase() || "U"}
-                </div>
+                <Avatar nombre={u.nombre} url={u.avatarUrl} size={48} className="shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-piedra-900 group-hover:text-jaen-600 transition-colors truncate">{u.nombre}</p>
                   <p className="text-xs text-piedra-500">Ver perfil →</p>

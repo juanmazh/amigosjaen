@@ -65,7 +65,17 @@ function Footer() {
 
       <div className="border-t border-jaen-600/60">
         <div className="max-w-6xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-crema-200/70">
-          <p>© 2025 AmigosJaén — Juan Manuel Zafra Hernández</p>
+          <p>
+            © 2025 AmigosJaén —{' '}
+            <a
+              href="https://juanmazh.github.io/Portfolio/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white underline-offset-2 hover:underline transition-colors"
+            >
+              Juan Manuel Zafra Hernández
+            </a>
+          </p>
           <div className="flex items-center gap-4">
             <Link to="/privacy" className="hover:text-white transition-colors">Privacidad</Link>
             <Link to="/terms" className="hover:text-white transition-colors">Términos</Link>

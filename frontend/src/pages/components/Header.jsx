@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import UserMenu from './UserMenu';
+import Notificaciones from './Notificaciones';
 import AuthContext from '../../context/AuthContext';
 
 const navLinks = [
@@ -58,7 +59,10 @@ function Header() {
               </Link>
             </>
           ) : (
-            <UserMenu usuario={usuario} />
+            <>
+              <Notificaciones />
+              <UserMenu usuario={usuario} />
+            </>
           )}
         </div>
 
@@ -114,7 +118,10 @@ function Header() {
                   </Link>
                 </div>
               ) : (
-                <UserMenu usuario={usuario} />
+                <div className="flex items-center gap-3">
+                  <Notificaciones />
+                  <UserMenu usuario={usuario} />
+                </div>
               )}
             </div>
           </div>

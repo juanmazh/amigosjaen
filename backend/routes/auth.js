@@ -14,8 +14,32 @@ router.get('/usuario', authMiddleware, authController.obtenerUsuario);  // Añad
 // Registro de usuario
 router.post('/register', authController.register);
 
-// Login de usuario 
+// Login de usuario
 router.post('/login', authController.login);
 
+// Actualizar perfil propio (nombre, avatarUrl)
+router.put('/perfil', authMiddleware, async (req, res) => {
+  try {
+    const { nombre, avatarUrl } = req.body;
+    const usuario = await Usuario.findByPk(req.usuario.id);
+    if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
+
+    if (typeof nombre === 'string' && nombre.trim()) usuario.nombre = nombre.trim();
+    if (typeof avatarUrl === 'string') usuario.avatarUrl = avatarUrl.trim() || null;
+    await usuario.save();
+
+    res.json({
+      id: usuario.id,
+      nombre: usuario.nombre,
+      email: usuario.email,
+      rol: usuario.rol,
+      avatarUrl: usuario.avatarUrl,
+      createdAt: usuario.createdAt,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'Error al actualizar el perfil' });
+  }
+});
 
 module.exports = router;

@@ -11,7 +11,7 @@ const { Seguidores, Usuario: UsuarioModel } = require('../models');
 router.get('/', verificarToken, soloAdmin, async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({
-      attributes: ['id', 'nombre', 'email', 'rol']
+      attributes: ['id', 'nombre', 'email', 'rol', 'avatarUrl']
     });
     res.json(usuarios);
   } catch (error) {
@@ -154,7 +154,7 @@ router.get('/:id/eventos-pasados', async (req, res) => {
 router.get('/publicos', async (req, res) => {
   try {
     const usuarios = await Usuario.findAll({
-      attributes: ['id', 'nombre']
+      attributes: ['id', 'nombre', 'avatarUrl']
     });
     res.json(usuarios);
   } catch (error) {
@@ -166,7 +166,7 @@ router.get('/publicos', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.params.id, {
-      attributes: ['id', 'nombre', 'email', 'createdAt', 'rol']
+      attributes: ['id', 'nombre', 'email', 'createdAt', 'rol', 'avatarUrl']
     });
     if (!usuario) return res.status(404).json({ msg: 'Usuario no encontrado' });
     res.json(usuario);
@@ -237,7 +237,7 @@ router.get('/:id/seguidores-lista', async (req, res) => {
       include: [{
         model: Usuario,
         as: 'seguidor',
-        attributes: ['id', 'nombre', 'email']
+        attributes: ['id', 'nombre', 'email', 'avatarUrl']
       }]
     });
     // Extraer solo los datos del usuario seguidor
@@ -259,7 +259,7 @@ router.get('/:id/seguidos', async (req, res) => {
       include: [{
         model: Usuario,
         as: 'seguido',
-        attributes: ['id', 'nombre', 'email']
+        attributes: ['id', 'nombre', 'email', 'avatarUrl']
       }]
     });
     // Extraer solo los datos del usuario seguido

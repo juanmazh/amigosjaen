@@ -4,6 +4,7 @@ import api from "../api";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import PerfilSecciones from "./components/PerfilSecciones";
+import Avatar from "./components/Avatar";
 import { useAuth } from "../context/AuthContext";
 
 const PerfilUsuario = () => {
@@ -98,7 +99,6 @@ const PerfilUsuario = () => {
   const fechaAlta = usuario.createdAt
     ? new Date(usuario.createdAt).toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" })
     : "";
-  const inicial = usuario.nombre?.[0]?.toUpperCase() || "U";
   const esPropio = usuarioLog && usuarioLog.id === usuario.id;
 
   return (
@@ -107,8 +107,8 @@ const PerfilUsuario = () => {
       <main className="flex-1">
         <section className="relative bg-gradient-to-br from-jaen-700 to-jaen-500 text-white">
           <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-            <div className="w-24 h-24 mx-auto rounded-full bg-white/15 backdrop-blur border-4 border-white/30 flex items-center justify-center mb-4">
-              <span className="font-display text-4xl font-semibold">{inicial}</span>
+            <div className="w-24 h-24 mx-auto mb-4 rounded-full border-4 border-white/30 overflow-hidden">
+              <Avatar nombre={usuario.nombre} url={usuario.avatarUrl} size={88} className="border-0" />
             </div>
             <h1 className="font-display text-4xl sm:text-5xl font-semibold mb-2">{usuario.nombre}</h1>
             <p className="text-crema-100/80 text-sm mb-6">{usuario.email}</p>
@@ -167,9 +167,7 @@ const PerfilUsuario = () => {
                 <ul className="divide-y divide-crema-200">
                   {listaSeguidores.map((u) => (
                     <li key={u.id} className="py-3 flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-jaen-100 text-jaen-600 flex items-center justify-center font-semibold">
-                        {u.nombre?.[0]?.toUpperCase() || "U"}
-                      </div>
+                      <Avatar nombre={u.nombre} url={u.avatarUrl} size={40} />
                       <div>
                         <p className="font-medium text-piedra-900">{u.nombre}</p>
                         <p className="text-xs text-piedra-500">{u.email}</p>

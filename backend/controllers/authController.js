@@ -4,6 +4,14 @@ const Usuario = require('../models/Usuario');
 require('dotenv').config(); 
 const JWT_SECRET = process.env.JWT_SECRET; // clave secreta para firmar los tokens
 
+// Dominios de email permitidos para registro
+const DOMINIOS_PERMITIDOS = [
+  'gmail.com',
+  'outlook.com', 'outlook.es',
+  'hotmail.com', 'hotmail.es',
+  'live.com', 'live.es',
+];
+
 // Función REGISTER
 exports.register = async (req, res) => {
   const { nombre, email, contraseña, rol } = req.body;
@@ -11,6 +19,14 @@ exports.register = async (req, res) => {
   // Validación básica de los campos
   if (!nombre || !email || !contraseña) {
     return res.status(400).json({ msg: 'Todos los campos son obligatorios' });
+  }
+
+  // Validar dominio del email
+  const dominio = (email.split('@')[1] || '').toLowerCase();
+  if (!DOMINIOS_PERMITIDOS.includes(dominio)) {
+    return res.status(400).json({
+      msg: `Solo se permiten correos de: ${DOMINIOS_PERMITIDOS.join(', ')}`
+    });
   }
 
   try {
@@ -99,7 +115,7 @@ exports.login = async (req, res) => {
 exports.obtenerUsuario = async (req, res) => {
   try {
     const usuario = await Usuario.findByPk(req.usuario.id, {
-      attributes: ['id', 'nombre', 'email', 'rol', 'createdAt'] 
+      attributes: ['id', 'nombre', 'email', 'rol', 'avatarUrl', 'createdAt']
     });
 
     if (!usuario) {

@@ -3,6 +3,8 @@ import api from '../api';
 import { Link, useNavigate } from 'react-router-dom';
 import jaenImage from '../assets/jaen.jpg';
 
+const DOMINIOS_PERMITIDOS = ['gmail.com', 'outlook.com', 'outlook.es', 'hotmail.com', 'hotmail.es', 'live.com', 'live.es'];
+
 function Register() {
   const navigate = useNavigate();
   const [nombre, setNombre] = useState('');
@@ -15,13 +17,20 @@ function Register() {
   const handleSubmit = async e => {
     e.preventDefault();
     setError('');
+
+    const dominio = (email.split('@')[1] || '').toLowerCase();
+    if (!DOMINIOS_PERMITIDOS.includes(dominio)) {
+      setError(`Solo se permiten correos de: ${DOMINIOS_PERMITIDOS.join(', ')}`);
+      return;
+    }
+
     setCargando(true);
     try {
       await api.post('/auth/register', { nombre, email, contraseña });
       setOk(true);
       setTimeout(() => navigate('/login'), 1500);
-    } catch {
-      setError('Error al registrar usuario');
+    } catch (err) {
+      setError(err.response?.data?.msg || 'Error al registrar usuario');
     } finally {
       setCargando(false);
     }
@@ -68,6 +77,7 @@ function Register() {
                 onChange={e => setEmail(e.target.value)}
                 required
               />
+              <p className="text-xs text-piedra-500 mt-1.5">Solo se aceptan correos de Gmail, Outlook, Hotmail o Live.</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-piedra-700 mb-1.5">Contraseña</label>

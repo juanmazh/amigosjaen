@@ -8,6 +8,7 @@ const Comentario = require('./Comentario');
 const Seguidores = require('./Seguidores');
 const MensajeDirecto = require('./MensajeDirecto')(sequelize);
 const Valoracion = require('./Valoracion');
+const Notificacion = require('./Notificacion');
 
 // Definir relaciones de modelos
 Usuario.hasMany(Publicacion);
@@ -60,6 +61,10 @@ Valoracion.belongsTo(Evento, { foreignKey: 'eventoId' });
 Usuario.hasMany(Valoracion, { foreignKey: 'usuarioId' });
 Evento.hasMany(Valoracion, { foreignKey: 'eventoId' });
 
+// Relación Notificacion
+Usuario.hasMany(Notificacion, { foreignKey: 'usuarioId' });
+Notificacion.belongsTo(Usuario, { foreignKey: 'usuarioId' });
+
 module.exports = {
   sequelize,
   Usuario,
@@ -71,4 +76,5 @@ module.exports = {
   Seguidores,
   MensajeDirecto,
   Valoracion,
+  Notificacion,
 };

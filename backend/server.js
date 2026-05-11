@@ -13,6 +13,7 @@ const eventosRoutes = require('./routes/eventos');
 const comentariosRouter = require('./routes/comentarios');
 const mensajesDirectosRoutes = require('./routes/mensajesDirectos');
 const valoracionesRoutes = require('./routes/valoraciones');
+const notificacionesRoutes = require('./routes/notificaciones');
 
 const app = express();
 app.use(express.json());
@@ -55,6 +56,7 @@ app.use('/api/eventos', eventosRoutes);
 app.use('/api/comentarios', comentariosRouter);
 app.use('/api/mensajes', mensajesDirectosRoutes);
 app.use('/api/valoraciones', valoracionesRoutes);
+app.use('/api/notificaciones', notificacionesRoutes);
 
 const server = http.createServer(app);
 const io = socketIo(server, {

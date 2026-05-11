@@ -4,6 +4,7 @@ import { FaChevronDown } from "react-icons/fa";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 import AuthContext from "../../context/AuthContext";
+import Avatar from "./Avatar";
 
 const MySwal = withReactContent(Swal);
 
@@ -44,8 +45,6 @@ export default function UserMenu({ usuario }) {
 
   if (!usuario) return null;
 
-  const inicial = usuario.nombre?.[0]?.toUpperCase() || "U";
-
   return (
     <div className="relative inline-block">
       <button
@@ -53,9 +52,7 @@ export default function UserMenu({ usuario }) {
         onClick={() => setOpen(!open)}
         className="inline-flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border border-crema-300 hover:border-jaen-300 hover:bg-jaen-50 transition-all"
       >
-        <span className="w-8 h-8 rounded-full bg-jaen-500 text-white flex items-center justify-center text-sm font-semibold">
-          {inicial}
-        </span>
+        <Avatar nombre={usuario.nombre} url={usuario.avatarUrl} size={32} />
         <span className="text-sm font-medium text-piedra-700">{usuario.nombre || "Cuenta"}</span>
         <FaChevronDown className={`text-xs text-piedra-500 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
